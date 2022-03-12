@@ -1,7 +1,7 @@
 #ifndef __BUILDER_1D__
 #define __BUILDER_1D__
 
-#include "LinElem.h"
+#include "LinElem.cpp"
 
 class Builder1D
 {

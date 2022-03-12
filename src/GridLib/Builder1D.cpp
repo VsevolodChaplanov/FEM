@@ -11,6 +11,8 @@ Builder1D::Builder1D(const double &left_bound, const double &right_bound, const 
 	for (size_t i = 0; i < NN; i++)
 	{
 		LinElem* LinearElement = new LinElem({mesh[i], mesh[i+1]}, {i,i+1});
-		Elements[i] = LinearElement;
+		// TODO ускорение
+		// 			Задать сразу длинну вектора по NN
+		Elements.push_back(LinearElement);
 	}
 }

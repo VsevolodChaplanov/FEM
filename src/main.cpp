@@ -1,6 +1,5 @@
 #include <iostream>
-#include "boost/geometry/geometry.hpp"
-#include "GridLib/Builder1D.h"
+#include "GridLib/Builder1D.cpp"
 
 
 int main(int argc, char const *argv[])
