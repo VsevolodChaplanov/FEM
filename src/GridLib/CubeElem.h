@@ -31,6 +31,7 @@ public:
 	CubeElem(const std::vector<std::vector<double>> &vertices, const std::vector<std::size_t> &GIndices);
 	double GetMass(const std::size_t &, const std::size_t &, const std::size_t &);
 	double GetStiff(const std::size_t &, const std::size_t &, const std::size_t &);
+	double GetLumpedMass(const std::size_t &, const std::size_t &, const std::size_t &);
 	double P_to_Param(const double &, const double &, const double &);
 
 private:

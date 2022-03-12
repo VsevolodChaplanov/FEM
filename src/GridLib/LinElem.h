@@ -39,17 +39,18 @@ private: // Methods
 	double phi1(const double _xi);																					// Базисная функция линейного элемента phi(x) = 1 -x
 	double phi2(const double _xi);																					// Базнсная фукнция линейного элемента phi(x) = x
 
+private: // Properties
+
+	double Lenght; 																									// Длинна элемента
+	double StartPoint;		
+
 public:
 
 	std::vector<std::size_t> GlobalIndices;																			// Массив глобальных идексов объекта
 	const std::vector<std::vector<double>> MassMatrix {{Lenght / 3, Lenght / 6}, {Lenght / 6, Lenght / 3}};			// Локальная матрица масс
 	const std::vector<std::vector<double>> StiffnessMatrix {{Lenght / 3, Lenght / 6}, {Lenght / 6, Lenght / 3}}; 	// Локальная матрица Жесткости
 	const std::vector<std::vector<double>> LumpedMassMatrix {{Lenght / 3, Lenght / 6}, {Lenght / 6, Lenght / 3}}; 	// Локальная lumped mass матрица
-
-private: // Properties
-
-	double Lenght; 																									// Длинна элемента
-	double StartPoint;																								// Точка начала отрезка
+																						// Точка начала отрезка
 };
 
 // TODO
