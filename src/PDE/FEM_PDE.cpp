@@ -3,12 +3,17 @@
 
 #include "FEM_PDE.h"
 
-FEM_PDE::FEM_PDE(Builder1D* Elements, const std::vector<double> &f_func_vec) : nn(Elements->GetNElem())
+FEM_PDE::FEM_PDE(const std::size_t NN) : nn(NN)
 {
-	M->resize(nn);
-	S->resize(nn);
-	Lhs->resize(nn);
-	Rhs.resize(nn);
+	M = new CMatrix(nn+1);
+	S = new CMatrix(nn+1);
+	Lhs = new CMatrix(nn+1);
+	Rhs.resize(nn+1);
+	Solution.resize(nn+1);
+}
+
+void FEM_PDE::AssembleSystem(Builder1D* Elements, const std::vector<double> &f_func_vec)
+{
 	for (size_t k = 0; k < nn; k++)
 	{
 		for (size_t i = 0; i < Elements->elems[k]->NBasisFunction; i++)
@@ -24,6 +29,12 @@ FEM_PDE::FEM_PDE(Builder1D* Elements, const std::vector<double> &f_func_vec) : n
 	}
 	Rhs = (*M) * f_func_vec;
 	SummCM(M, S, Lhs);
+}
+
+void FEM_PDE::Solve(const std::string &Method)
+{
+	IMatrixSolver* solver = IMatrixSolver::Fabric(Method);
+	solver->solve((*Lhs), Rhs, Solution);
 }
 
 #endif

@@ -5,7 +5,11 @@
 #include "../GridLib/Builder1D.cpp"
 #include "../CompressedMatrix/CompressedM.h"
 #include "../CompressedMatrix/CompressedM.cpp"
+#include "../Solvers/Solvers.hpp"
+#include "../Solvers/Solvers.cpp"
 #include <functional>
+#include <string>
+
 
 class FEM_PDE
 {
@@ -21,8 +25,9 @@ private:
 public:
 
 	// Получает объект 
-	FEM_PDE(Builder1D* Elements, const std::vector<double> &f_func_vec);
-	void Solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> Solution);
+	FEM_PDE(const std::size_t NN);
+	void AssembleSystem(Builder1D* Elements, const std::vector<double> &f_func_vec);
+	void Solve(const std::string &Method);
 };
 
 #endif

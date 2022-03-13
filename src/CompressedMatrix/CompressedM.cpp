@@ -1,3 +1,6 @@
+#ifndef __COMPRESSEDFORMAT_CPP__
+#define __COMPRESSEDFORMAT_CPP__
+
 #include "CompressedM.h"
 
 // ============= C++ ============= //
@@ -209,3 +212,5 @@ void CMatrix::SetZeroRow(int i)
 }
 
 CMatrix::~CMatrix() { }
+
+#endif
