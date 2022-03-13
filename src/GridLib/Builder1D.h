@@ -3,14 +3,20 @@
 
 #include "LinElem.cpp"
 
+#include <cmath>
+#include <vector>
+
 class Builder1D
 {
 public: // Properties
 
+	// Хранение элементов
+	std::vector<LinElem*> elems;	
+
 private:
 
-	// Хранение элементов
-	std::vector<LinElem*> Elements;
+	// Число элементов
+	const std::size_t nn;
 
 public: // Methods
 
@@ -18,6 +24,8 @@ public: // Methods
 	Builder1D(const double &, const double &, const std::size_t &);
 	// Construct elements on a unstructured grid
 	Builder1D(const std::vector<double> &Mesh);
+	// Get number of elements
+	std::size_t GetNElem(void);
 
 private:
 

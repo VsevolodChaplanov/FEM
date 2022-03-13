@@ -36,21 +36,21 @@ public:
 
 private: // Methods
 
-	double phi1(const double _xi);																					// Базисная функция линейного элемента phi(x) = 1 -x
-	double phi2(const double _xi);																					// Базнсная фукнция линейного элемента phi(x) = x
+	double phi1(const double &_xi);	// Mathes to the left vertex																			// Базисная функция линейного элемента phi(x) = 1 -x
+	double phi2(const double &_xi);	// Mathes to the right vertex														// Базнсная фукнция линейного элемента phi(x) = x
 
 private: // Properties
 
-	double Lenght; 																									// Длинна элемента
-	double StartPoint;		
+	double Length; 																									// Длинна элемента
+	double StartPoint;		                                  														// Точка начала отрезка
 
 public:
 
-	std::vector<std::size_t> GlobalIndices;																			// Массив глобальных идексов объекта
-	const std::vector<std::vector<double>> MassMatrix {{Lenght / 3, Lenght / 6}, {Lenght / 6, Lenght / 3}};			// Локальная матрица масс
-	const std::vector<std::vector<double>> StiffnessMatrix {{Lenght / 3, Lenght / 6}, {Lenght / 6, Lenght / 3}}; 	// Локальная матрица Жесткости
-	const std::vector<std::vector<double>> LumpedMassMatrix {{Lenght / 3, Lenght / 6}, {Lenght / 6, Lenght / 3}}; 	// Локальная lumped mass матрица
-																						// Точка начала отрезка
+	std::vector<std::size_t> GlobalIndices;	
+	const std::size_t NBasisFunction = GlobalIndices.size(); // Тут поменять когда будет массив базисных функций																		// Массив глобальных идексов объекта
+	const std::vector<std::vector<double>> MassMatrix {{Length / 3, Length / 6}, {Length / 6, Length / 3}};			// Локальная матрица масс
+	const std::vector<std::vector<double>> StiffnessMatrix {{Length / 3, Length / 6}, {Length / 6, Length / 3}}; 	// Локальная матрица Жесткости
+	const std::vector<double> LumpedMassMatrix {Length / 2, Length / 2}; 	// Локальная lumped mass матрица
 };
 
 // TODO

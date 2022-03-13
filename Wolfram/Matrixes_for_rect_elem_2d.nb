@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     20477,        572]
-NotebookOptionsPosition[     18893,        537]
-NotebookOutlinePosition[     19289,        553]
-CellTagsIndexPosition[     19246,        550]
+NotebookDataLength[     20455,        572]
+NotebookOptionsPosition[     18895,        537]
+NotebookOutlinePosition[     19286,        553]
+CellTagsIndexPosition[     19243,        550]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -258,8 +258,8 @@ Cell[BoxData[{
 \:043c\:0430\:0441\:0441\\n 36/\>\"", ",", "DetJ", ",", "\"\<*\>\"", ",", 
     RowBox[{"MatrixForm", "[", 
      RowBox[{
-      RowBox[{"MassMatrix", "/", "DetJ"}], "*", "36"}], "]"}]}], "]"}], ";"}]}
-], "Input",
+      RowBox[{"MassMatrix", "/", "DetJ"}], "*", "36"}], "]"}]}], "]"}], 
+  ";"}]}], "Input",
  CellChangeTimes->{{3.856009720810625*^9, 3.8560097208126216`*^9}, {
   3.8560098121827908`*^9, 3.85600999425768*^9}, {3.856010169220521*^9, 
   3.856010170078128*^9}, {3.856011927504162*^9, 3.856011953672055*^9}, {
@@ -535,9 +535,9 @@ Cell[BoxData[
  CellLabel->"Out[20]=",ExpressionUUID->"cafa861e-076d-4064-a0a2-3626989f1077"]
 }, Open  ]]
 },
-WindowSize->{958, 988},
-WindowMargins->{{Automatic, -7}, {Automatic, 0}},
-FrontEndVersion->"12.3 for Microsoft Windows (64-bit) (May 11, 2021)",
+WindowSize->{693, 762},
+WindowMargins->{{Automatic, 0}, {0, Automatic}},
+FrontEndVersion->"13.0 for Linux x86 (64-bit) (December 2, 2021)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"206452c3-d7b3-4c08-944b-2bc46cc45620"
 ]
@@ -553,26 +553,26 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 1703, 46, 248, "Input",ExpressionUUID->"e6570861-321b-4856-8656-f65504dfa08b"],
+Cell[580, 22, 1703, 46, 260, "Input",ExpressionUUID->"e6570861-321b-4856-8656-f65504dfa08b"],
 Cell[CellGroupData[{
-Cell[2308, 72, 808, 22, 58, "Print",ExpressionUUID->"10883d42-8f89-4331-bddc-75c216d01210"],
+Cell[2308, 72, 808, 22, 59, "Print",ExpressionUUID->"10883d42-8f89-4331-bddc-75c216d01210"],
 Cell[3119, 96, 871, 24, 79, "Print",ExpressionUUID->"337cd813-3061-44c5-994a-ca1e67c0efe9"]
 }, Open  ]]
 }, Open  ]],
-Cell[4017, 124, 1654, 45, 130, "Input",ExpressionUUID->"a9a69e93-8e3f-4c0e-9a33-f87494311ff1"],
-Cell[5674, 171, 2102, 53, 210, "Input",ExpressionUUID->"93dcac5a-9e2b-4ce2-aed6-061173faf6ea"],
+Cell[4017, 124, 1654, 45, 133, "Input",ExpressionUUID->"a9a69e93-8e3f-4c0e-9a33-f87494311ff1"],
+Cell[5674, 171, 2102, 53, 259, "Input",ExpressionUUID->"93dcac5a-9e2b-4ce2-aed6-061173faf6ea"],
 Cell[CellGroupData[{
-Cell[7801, 228, 1538, 39, 80, InheritFromParent,ExpressionUUID->"7c6d34d0-1db6-4ad6-a200-2076faf573b4"],
-Cell[9342, 269, 1200, 31, 93, "Print",ExpressionUUID->"b62d1350-2145-4995-af51-5295c0a690a9"]
+Cell[7801, 228, 1540, 39, 127, "Input",ExpressionUUID->"7c6d34d0-1db6-4ad6-a200-2076faf573b4"],
+Cell[9344, 269, 1200, 31, 96, "Print",ExpressionUUID->"b62d1350-2145-4995-af51-5295c0a690a9"]
 }, Open  ]],
-Cell[10557, 303, 1350, 35, 174, InheritFromParent,ExpressionUUID->"30449732-4ecb-421f-869a-787166c15ec7"],
+Cell[10559, 303, 1350, 35, 183, "Input",ExpressionUUID->"30449732-4ecb-421f-869a-787166c15ec7"],
 Cell[CellGroupData[{
-Cell[11932, 342, 1758, 43, 120, "Input",ExpressionUUID->"b4e4040f-90e0-4e21-b300-6d0efd2ee56e"],
-Cell[13693, 387, 4170, 115, 115, "Print",ExpressionUUID->"7f39f250-5f4d-4752-a197-e66e5a01c4ef"]
+Cell[11934, 342, 1758, 43, 222, "Input",ExpressionUUID->"b4e4040f-90e0-4e21-b300-6d0efd2ee56e"],
+Cell[13695, 387, 4170, 115, 114, "Print",ExpressionUUID->"7f39f250-5f4d-4752-a197-e66e5a01c4ef"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[17900, 507, 670, 17, 44, "Input",ExpressionUUID->"cc29037f-61fc-4282-b334-5b884fb29708"],
-Cell[18573, 526, 304, 8, 50, "Output",ExpressionUUID->"cafa861e-076d-4064-a0a2-3626989f1077"]
+Cell[17902, 507, 670, 17, 46, "Input",ExpressionUUID->"cc29037f-61fc-4282-b334-5b884fb29708"],
+Cell[18575, 526, 304, 8, 47, "Output",ExpressionUUID->"cafa861e-076d-4064-a0a2-3626989f1077"]
 }, Open  ]]
 }
 ]
