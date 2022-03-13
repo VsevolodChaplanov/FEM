@@ -1,5 +1,5 @@
-#ifndef __PARTIAL_DEFF_EQUATION__
-#define __PARTIAL_DEFF_EQUATION__
+#ifndef __PARTIAL_DIFF_EQUATION__
+#define __PARTIAL_DIFF_EQUATION__
 
 #include "../GridLib/Builder1D.h"
 #include "../GridLib/Builder1D.cpp"

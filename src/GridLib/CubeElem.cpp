@@ -1,3 +1,6 @@
+#ifndef __CUBE_ELEMENT_CPP__
+#define __CUBE_ELEMENT_CPP__
+
 #include "CubeElem.h"
 
 double CubeElem::phi1(const double &_xi, const double &_eta, const double &_zeta)
@@ -39,3 +42,5 @@ double CubeElem::phi8(const double &_xi, const double &_eta, const double &_zeta
 {
 	return (1-_xi) * _eta * _zeta;
 }
+
+#endif

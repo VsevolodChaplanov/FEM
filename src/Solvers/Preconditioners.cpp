@@ -1,3 +1,7 @@
+#ifndef __PRECONDITION_METHODS_CPP__
+#define __PRECONDITION_METHODS_CPP__
+
+
 #include "Preconditioners.hpp"
 
 IPreconditioner* IPreconditioner::Fabric(const std::string &Precondition_method)
@@ -195,3 +199,5 @@ std::vector<double> ISO0_2_P::Precondition(CMatrix &Lhs, const std::vector<doubl
 
 	return y;	
 }
+
+#endif

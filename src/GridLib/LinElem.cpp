@@ -1,5 +1,5 @@
-#ifndef __LINELEMCPP__
-#define __LINELEMCPP__
+#ifndef __LINELEM_CPP__
+#define __LINELEM_CPP__
 
 #include "LinElem.h"
 #include <cmath>
@@ -16,6 +16,21 @@ double LinElem::phi1(const double &_xi)
 double LinElem::phi2(const double &_xi)
 {
 	return _xi;
+}
+
+inline double LinElem::GetMass(const std::size_t &i, const std::size_t &j)
+{
+	return MassMatrix[i][j];
+}
+
+inline double LinElem::GetStiff(const std::size_t &i, const std::size_t &j)
+{
+	return StiffnessMatrix[i][j];
+}
+
+inline double LinElem::GetLumped(const std::size_t &i)
+{
+	return LumpedMassMatrix[i];
 }
 
 #endif

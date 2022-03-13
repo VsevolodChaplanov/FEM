@@ -1,3 +1,6 @@
+#ifndef __BUILDER_1D_CPP__
+#define __BUILDER_1D_CPP__
+
 #include "Builder1D.h"
 
 Builder1D::Builder1D(const double &left_bound, const double &right_bound, const std::size_t &NN) : nn(NN)
@@ -33,3 +36,5 @@ std::size_t Builder1D::GetNElem()
 {
 	return nn;
 }
+
+#endif

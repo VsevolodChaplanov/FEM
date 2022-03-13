@@ -1,4 +1,8 @@
+#ifndef __VECTOR_OPERATIONS_CPP__
+#define __VECTOR_OPERATIONS_CPP__
+
 #include "VecLib.h"
+#include <vector>
 
 template<typename T>
 std::vector<T> NumProduct(const std::vector<T> &vector, const double a)
@@ -23,3 +27,5 @@ T DotProduct(const std::vector<T> &a, const std::vector<T> &b)
 	}
 	return result;
 }
+
+#endif

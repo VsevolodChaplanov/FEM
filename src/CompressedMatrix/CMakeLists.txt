@@ -1,0 +1,3 @@
+set(COMPRESSED_MAT CompressedM.cpp)
+
+add_library(COMPRESSEDMAT_LIB STATIC ${COMPRESSED_MAT})

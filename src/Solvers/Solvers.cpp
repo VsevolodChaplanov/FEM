@@ -1,3 +1,6 @@
+#ifndef __MATRIX_SOLVERS_CPP__
+#define __MATRIX_SOLVERS_CPP__
+
 #include "Solvers.hpp"
 
 
@@ -662,3 +665,5 @@ GD_Solver_P::GD_Solver_P(IPreconditioner* Preconditioner)
 {
 	this->Preconditioner = Preconditioner;
 }
+
+#endif

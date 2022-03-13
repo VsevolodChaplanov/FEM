@@ -174,24 +174,20 @@ CMatrix CMatrix::operator=(CMatrix &Matrix_A)
 // 	return result;
 // }
 
-CMatrix* SummCM(CMatrix* A, CMatrix* B)
+void SummCM(CMatrix* A, CMatrix* B, CMatrix* Lhs)
 {
 	std::size_t N = A->size();
-	CMatrix result(N);
 	for (size_t i = 0; i < N; i++)
 	{
 		for (auto elem : (*A)[i])
 		{
-			result.SetValue(i, elem.first, result.GetValue(i, elem.first) + elem.second);
+			Lhs->SetValue(i, elem.first, Lhs->GetValue(i, elem.first) + elem.second);
 		}
 		for (auto elem : (*B)[i])
 		{
-			result.SetValue(i, elem.first, result.GetValue(i, elem.first) + elem.second);
+			Lhs->SetValue(i, elem.first, Lhs->GetValue(i, elem.first) + elem.second);
 		}
-		
 	}
-	CMatrix* ptrR = &result;
-	return ;
 }
 
 
