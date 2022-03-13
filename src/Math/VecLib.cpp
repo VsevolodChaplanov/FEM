@@ -9,7 +9,7 @@ std::vector<T> NumProduct(const std::vector<T> &vector, const double a)
 {
 	std::size_t N = vector.size();
 	std::vector<T> result(N);
-	for(std::size_t i = 0; i < N, i++)
+	for(std::size_t i = 0; i < N; i++)
 	{
 		result[i] = vector[i] * a;
 	}
@@ -19,9 +19,9 @@ std::vector<T> NumProduct(const std::vector<T> &vector, const double a)
 template<typename T>
 T DotProduct(const std::vector<T> &a, const std::vector<T> &b)
 {
-	std::size_t N = vector.size();
+	std::size_t N = a.size();
 	T result;
-	for(std::size_t i = 0; i < N, i++)
+	for(std::size_t i = 0; i < N; i++)
 	{
 		result += a[i] * b[i];
 	}

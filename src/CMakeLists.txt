@@ -18,6 +18,6 @@ target_link_libraries(${TEST_EXE} 	FINELEM
 									VECT_LIB
 									COMPRESSEDMAT_LIB
 									PDE_LIB
-									MAT_LIB
+									VECT_LIB
 									SOLVERS_LIB)
 

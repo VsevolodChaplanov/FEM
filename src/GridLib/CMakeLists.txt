@@ -1,4 +1,4 @@
-set(FIN_ELEMS_LIB 	Builder.cpp
+set(FIN_ELEMS_LIB 	Builder1D.cpp
 				 	LinElem.cpp
 				  	RectElem.cpp
 					CubeElem.cpp)
