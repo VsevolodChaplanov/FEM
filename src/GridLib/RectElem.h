@@ -3,17 +3,18 @@
 
 #include <cmath>
 #include <vector>
-#include "../Math/VecLib.h"
+#include "IFiniteElem.h"
 
-class RectElem
+class RectElem : public IFiniteElement
 {
 public:
 
-	RectElem(const std::vector<std::vector<double>> &vertices, const std::vector<std::size_t> &GIndices);
-	double GetMass(const std::size_t &, const std::size_t &);
-	double GetSteffness(const std::size_t &, const std::size_t &);
-	double GetLumped(const std::size_t &, const std::size_t &);
-	void P_to_Param(const double &, const double &);
+	RectElem(const std::vector<double> &vertices, const std::vector<std::size_t> &GIndices);
+	std::vector<std::vector<double>>* GetMass(const std::size_t , const std::size_t ) override;
+	std::vector<std::vector<double>>* GetStiffness(const std::size_t , const std::size_t ) override;
+	std::vector<double>* GetLumped(const std::size_t, const std::size_t ) override;
+	std::vector<double> PhysToParam(const double x, const double y = 0, const double z = 0) override;
+	std::vector<double> PhysToParam(const std::vector<double> &) override;
 
 private:
 
@@ -22,15 +23,22 @@ private:
 	double phi3(const double &, const double &);
 	double phi4(const double &, const double &);
 
+private:
+
+	const double Lx;
+	const double Ly;
+	const double Volume = Lx * Ly;
+	const std::vector<std::size_t> GlobalIndices;
+
 public:
 
-	const std::vector<std::vector<double>> MassMatrix {
+	std::vector<std::vector<double>> MassMatrix {
 														{Lx * Ly / 36 * 4, Lx * Ly / 36 * 2, Lx * Ly / 36 * 1, Lx * Ly / 36 * 2},
 													    {Lx * Ly / 36 * 2, Lx * Ly / 36 * 4, Lx * Ly / 36 * 2, Lx * Ly / 36 * 1},
 													    {Lx * Ly / 36 * 1, Lx * Ly / 36 * 2, Lx * Ly / 36 * 4, Lx * Ly / 36 * 2},
 													    {Lx * Ly / 36 * 2, Lx * Ly / 36 * 1, Lx * Ly / 36 * 2, Lx * Ly / 36 * 4} 
 													  };
-	const std::vector<std::vector<double>> StiffnessMatrix {
+	std::vector<std::vector<double>> StiffnessMatrix {
 															{
 															 1 / (6 * Lx * Ly) * 2 * (Ly * Ly + Lx * Lx), 
 															 1 / (6 * Lx * Ly) * (Lx * Lx - 2 * Ly * Ly), 
@@ -56,14 +64,7 @@ public:
 														 	 1 / (6 * Lx * Ly) * 2 * (Ly * Ly + Lx * Lx)
 															} 
 														   };
-	const std::vector<double> LumpedMatrix { 1/4, 1/4, 1/4, 1/4 };
-
-private:
-
-	const double Lx;
-	const double Ly;
-	const double Volume = Lx * Ly;
-	const std::vector<std::size_t> GlobalIndices;
+	std::vector<double> LumpedMatrix { 1/4, 1/4, 1/4, 1/4 };
 };
 
 #endif

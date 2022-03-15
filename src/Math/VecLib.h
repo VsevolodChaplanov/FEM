@@ -4,9 +4,7 @@
 #include <vector>
 #include <cmath>
 
-template<typename T>
-std::vector<T> NumProduct(const std::vector<T> &, const double a);
-template<typename T>
-T DotProduct(const std::vector<T> &, const std::vector<T> &);
+std::vector<double> NumProduct(const std::vector<double> &, const double a);
+double DotProduct(const std::vector<double> &, const std::vector<double> &);
 
 #endif

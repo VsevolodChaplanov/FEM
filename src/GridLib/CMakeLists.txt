@@ -1,6 +1,14 @@
-set(FIN_ELEMS_LIB 	Builder1D.cpp
-				 	LinElem.cpp
-				  	RectElem.cpp
-					CubeElem.cpp)
+set(SRC IFiniteElem.cpp
+	LinElem.cpp
+	RectElem.cpp
+	CubeElem.cpp
+	MeshBuilder.cpp)
 
-add_library(FINELEM STATIC ${FIN_ELEMS_LIB})
+set(HEADERS MeshBuilder.h
+	IFiniteElem.h
+	CubeElem.h
+	LinElem.h
+	RectElem.h
+	IFiniteElem.h)
+
+add_library(FINELEM STATIC ${SRC} ${HEADERS})

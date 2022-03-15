@@ -23,4 +23,19 @@ double RectElem::phi4(const double &_xi, const double &_eta)
 	return (1-_xi)*_eta;
 }
 
+std::vector<std::vector<double>>* RectElem::GetMass(const std::size_t i, const std::size_t j)
+{
+	return &MassMatrix;
+}
+
+std::vector<std::vector<double>>* RectElem::GetStiffness(const std::size_t i, const std::size_t j)
+{
+	return &StiffnessMatrix;
+}
+
+std::vector<double>* RectElem::GetLumped(const std::size_t i, const std::size_t j)
+{
+	return &LumpedMatrix;
+}
+
 #endif

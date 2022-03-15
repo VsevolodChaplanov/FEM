@@ -4,41 +4,29 @@
 
 #include <vector>
 #include <cmath>
+#include "IFiniteElem.h"
 
-//
-// 			6  --------------  7
-//		  - -				 - -
-//		-	-			  -    -
-//	  -		-		   -  	   -
-// 4 -------------- 5     	   -
-// -   		-       -          -
-// -    	-       -          -
-// Lz 		2  --------------  3
-// -  	  -		    -        -
-// -    Ly			-     -
-// -  - 			-  -
-// 0 ------Lx------ 1
-//
-class CubeElem
+class CubeElem : public IFiniteElement
 {
 public:
 
-	CubeElem(const std::vector<std::vector<double>> &vertices, const std::vector<std::size_t> &GIndices);
-	double GetMass(const std::size_t &, const std::size_t &, const std::size_t &);
-	double GetStiff(const std::size_t &, const std::size_t &, const std::size_t &);
-	double GetLumpedMass(const std::size_t &, const std::size_t &, const std::size_t &);
-	double P_to_Param(const double &, const double &, const double &);
+	CubeElem(const std::vector<double> &vertices, const std::vector<std::size_t> &GIndices);
+	std::vector<std::vector<double>>* GetMass(const std::size_t , const std::size_t ) override;
+	std::vector<std::vector<double>>* GetStiffness(const std::size_t , const std::size_t ) override;
+	std::vector<double>* GetLumped(const std::size_t, const std::size_t ) override;
+	std::vector<double> PhysToParam(const double x, const double y = 0, const double z = 0) override;
+	std::vector<double> PhysToParam(const std::vector<double> &) override;
 
 private:
 
-	double phi1(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 0
-	double phi2(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 1
-	double phi3(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 3
-	double phi4(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 2
-	double phi5(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 4
-	double phi6(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 5
-	double phi7(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 7
-	double phi8(const double &_xi, const double &_eta, const double &_zeta); // Matches to point 6
+	double phi1(const double _xi, const double _eta, const double _zeta); // Matches to point 0
+	double phi2(const double _xi, const double _eta, const double _zeta); // Matches to point 1
+	double phi3(const double _xi, const double _eta, const double _zeta); // Matches to point 3
+	double phi4(const double _xi, const double _eta, const double _zeta); // Matches to point 2
+	double phi5(const double _xi, const double _eta, const double _zeta); // Matches to point 4
+	double phi6(const double _xi, const double _eta, const double _zeta); // Matches to point 5
+	double phi7(const double _xi, const double _eta, const double _zeta); // Matches to point 7
+	double phi8(const double _xi, const double _eta, const double _zeta); // Matches to point 6
 
 private:
 
@@ -141,22 +129,5 @@ public:
 	const std::vector<double> LumpedMatrix {DetJ / 8, DetJ / 8,  DetJ / 8, DetJ / 8, DetJ / 8, DetJ / 8, DetJ / 8, DetJ / 8};
 };
 
-struct Point
-{
-public:
-
-	double x = 0;
-	double y = 0;
-	double z = 0;
-
-public:
-
-	Point GetPoint();
-	double GetX();
-	double GetY();
-	double GetZ();
-	Point(const double &, const double &, const double &);
-	Point(const std::vector<double> &);
-};
 
 #endif

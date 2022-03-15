@@ -1,3 +1,4 @@
-set(VECT VecLib.cpp)
+set(SRC VecLib.cpp)
+set(HEADERS VecLib.h)
 
-add_library(VECT_LIB STATIC ${VECT})
+add_library(VECT_LIB STATIC ${SRC} ${HEADERS})
