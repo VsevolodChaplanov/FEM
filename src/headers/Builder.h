@@ -6,8 +6,6 @@
 #include "FemGrid.h"
 #include "IFiniteElem.h"
 #include "IBoundaryElem.h"
-#include "LinElem.h"
-#include "IBoundaryElem.h"
 
 
 class Builder

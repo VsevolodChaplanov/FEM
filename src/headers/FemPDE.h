@@ -7,7 +7,7 @@
 #include <functional>
 #include <string>
 #include "CompressedM.h"
-#include "../Solvers/Solvers.cpp"
+#include "Solvers.h"
 
 //
 // - ∇{k(r)∇{u(r)}} + u(r) = f(r)
@@ -18,8 +18,10 @@ private:
 
 	// 
 	FemGrid* fin_elem_mesh;
+
 	std::function<double(double*)> f_func;
 	std::function<double(double*)> k_func;
+	std::function<double(double*)> u_exact;
 
 	size_t Nelem;
 	size_t Nvert;
@@ -38,6 +40,7 @@ public:
 	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*));
 	void assemble();
 	std::vector<double> solve(const std::string &Method, const double omega = 0);
+	void apply_boundary_condition_dirichlet(double (*u_analytical)(double*), const std::vector<size_t> &boundary_element_indices);
 
 private:
 

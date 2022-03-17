@@ -1,7 +1,7 @@
 #ifndef __COMPRESSEDFORMAT_CPP__
 #define __COMPRESSEDFORMAT_CPP__
 
-#include "CompressedM.h"
+#include "../headers/CompressedM.h"
 
 // ============= C++ ============= //
 // ========= Реализации ========== //

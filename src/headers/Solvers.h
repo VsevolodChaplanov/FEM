@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <iostream>
-#include "../CompressedMatrix/CompressedM.cpp"
-#include "Preconditioners.cpp"
-#include "VectorOperations.cpp"
+#include "CompressedM.h"
+#include "Preconditioners.h"
+#include "../pde_lib/VectorOperations.cpp"
 
 /*-----------------------------Solvers Interface-----------------------------*/
 class IMatrixSolver

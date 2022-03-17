@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include "../CompressedMatrix/CompressedM.cpp"
+#include "../headers/CompressedM.h"
 
 // Процедуры основных векторных и матричных операций
 

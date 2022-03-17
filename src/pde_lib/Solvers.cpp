@@ -1,8 +1,7 @@
 #ifndef __MATRIX_SOLVERS_CPP__
 #define __MATRIX_SOLVERS_CPP__
 
-#include "Solvers.hpp"
-
+#include "../headers/Solvers.h"
 
 /*-----------------------------Realizations-----------------------------*/
 IMatrixSolver* IMatrixSolver::Fabric(const std::string& method_name)

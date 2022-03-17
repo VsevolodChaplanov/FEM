@@ -1,7 +1,7 @@
 #ifndef __PRECONDITION_METHODS__
 #define __PRECONDITION_METHODS__
 
-#include "../CompressedMatrix/CompressedM.cpp"
+#include "CompressedM.h"
 #include <string>
 #include <vector>
 

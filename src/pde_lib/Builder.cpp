@@ -1,13 +1,13 @@
 #ifndef __FINITE_ELEMENTS_MESH_BUILDER_CPP__
 #define __FINITE_ELEMENTS_MESH_BUILDER_CPP__
 
-#include "Builder.h"
+#include "../headers/Builder.h"
 
 FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
 {
-	std::vector<IFiniteElement> elements(N);
+	std::vector<IFiniteElement> elements;
 	std::vector<double> vertices(N + 1);
-	std::vector<IBoundaryElement> boundary_elements(2);
+	std::vector<IBoundaryElement> boundary_elements;
 	size_t dim = 1;
 
 	// Fill vertices vector by uniform grid vertices
@@ -22,12 +22,20 @@ FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
 	for (size_t i = 0; i < N; i++)
 	{
 		// The IFiniteElements has Factory, which can be used here
-		elements[i] = LinElem({vertices[i], vertices[i+1]}, {i, i+1});
+		std::vector<double> temp_vert {vertices[i], vertices[i+1]};
+		std::vector<size_t> temp_ind  {i, i+1};
+		LinElem newelem(temp_vert, temp_ind);
+		elements.push_back(newelem);
 	}
 	
 	// Fill boundary elements vector
-	boundary_elements[0] = PointBoundaryElement({vertices[0]}, {0});
-	boundary_elements[1] = PointBoundaryElement({vertices[N]}, {N});
+	std::vector<double> temp_left_vert {vertices[0]};
+	std::vector<size_t> temp_left_ind {0};
+	std::vector<double> temp_right_vert {vertices[1]};
+	std::vector<size_t> temp_right_ind {N};
+
+	boundary_elements.push_back(PointBoundaryElement(temp_left_vert, temp_left_ind, 1));
+	boundary_elements.push_back(PointBoundaryElement(temp_right_vert, temp_right_ind, 2));
 	
 	// Making finite elements mesh
 	FemGrid grid(dim, vertices, elements, boundary_elements);

@@ -1,21 +1,22 @@
 #include <iostream>
-#include "lib/Builder.h"
-#include "lib/FemGrid.h"
-#include "lib/FemPDE.h"
+#include "pde_lib/Builder.cpp"
+#include "pde_lib/FemGrid.cpp"
+#include "pde_lib/FemPDE.cpp"
+#include "pde_lib/VecMath.cpp"
 
 double f_fun(double* point)
 {
-	return 0;
+	return 1;
 }
 
 double k_fun(double* point)
 {
-	return 0;
+	return 1;
 }
 
 double u_ex(double * point)
 {
-
+	return 1;
 }
 
 // Selector variant
@@ -37,16 +38,18 @@ int main(int argc, char const *argv[])
 	FemPDE fempde(&femgridlinear, f_fun, k_fun); 
 	// fempde->set_bc() 
 	fempde.assemble();
-	fempde.apply_boundary_condition_dirichlet(u_exact, femgridlinear.boundary_element_indices(1));
-	fempde.apply_boundary_condition_dirichlet(u_exact, femgridlinear.boundary_element_indices(2));
+	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(1));
+	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(2));
 	// 	fempde->apply_boundary_condition_dirichlet(u_exact, femgridlinear->boundary_element_indices()); All
 
 	std::vector<double> sol = fempde.solve("GD"); // вектор решения ин в самом методе
 
 	std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);
 	
-	std::vector<double> difference = u_ex_num - sol;
+	std::vector<double> difference = vector_difference(sol, u_ex_num);
 
+	// Было double norm2 = femgridlinear.norm2(difference);
+	// Но я сделал отдельную функцию для такой второй нормы по соображениям, что вторая норма может быть вычислена вроде для любого такого вектора
 	double norm2 = femgridlinear.norm2(difference);
 	double normmax = max_abs(difference);
 

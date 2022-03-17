@@ -1,7 +1,8 @@
 #ifndef __PARTIAL_DIFF_EQUATION_CPP__
 #define __PARTIAL_DIFF_EQUATION_CPP__
 
-#include "FemPDE.h"
+#include "../headers/FemPDE.h"
+#include "CompressedM.cpp"
 
 FemPDE::FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*))
 {
@@ -19,16 +20,16 @@ FemPDE::FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), do
 void FemPDE::assemble()
 {
 	std::vector<double> k_vec = make_k_vec_center();
-	for (auto ifinitelement : fin_elem_mesh->elements)
+	for (IFiniteElement& ifinitelement : fin_elem_mesh->elements)
 	{
-		for (size_t i = 0; i < ifinitelement.Nbasis; i++)
+		for (size_t i = 0; i < ifinitelement.n_basis; i++)
 		{
-			for (size_t j = 0; j < ifinitelement.Nbasis; j++)
+			for (size_t j = 0; j < ifinitelement.n_basis; j++)
 			{
-				size_t GlobI = ifinitelement.GIndices[i];
-				size_t GlobJ = ifinitelement.GIndices[j];
-				M_g.SetValue(GlobI, GlobJ, M_g.GetValue(GlobI, GlobJ) + ifinitelement.GetMass(i,j));
-				S_g.SetValue(GlobI, GlobJ, S_g.GetValue(GlobI, GlobJ) + ifinitelement.GetStiffness(i,j));
+				size_t GlobI = ifinitelement.global_indices[i];
+				size_t GlobJ = ifinitelement.global_indices[j];
+				M_g.SetValue(GlobI, GlobJ, M_g.GetValue(GlobI, GlobJ) + ifinitelement.get_mass(i,j));
+				S_g.SetValue(GlobI, GlobJ, S_g.GetValue(GlobI, GlobJ) + ifinitelement.get_stiffness(i,j));
 			}
 		}
 	}
@@ -36,13 +37,24 @@ void FemPDE::assemble()
 	SummCM(&M_g, &S_g, &lhs_g); // DummyFunc 
 }
 
-std::vector<double> FemPDE::solve(const std::string &Method, const double omega = 0)
+std::vector<double> FemPDE::solve(const std::string &Method, const double omega)
 {
 	// Тут потом сделать чтобы фабрика возвращала std::unique_ptr
 	IMatrixSolver* solver = IMatrixSolver::Fabric(Method, omega);
 	std::vector<double> solution;
 	solver->solve(lhs_g, rhs_g, solution);
 	return solution;
+}
+
+void FemPDE::apply_boundary_condition_dirichlet(double (*u_analytical)(double*), const std::vector<size_t> &boundary_element_indices)
+{
+	u_exact = u_analytical;
+	for (auto index : boundary_element_indices)
+	{
+		lhs_g.SetZeroRow(index);
+		lhs_g.SetValue(index, index, 1);
+		rhs_g[index] = u_exact(fin_elem_mesh->get_vertex(index));
+	}
 }
 
 std::vector<double> FemPDE::make_f_vec_center()
@@ -60,7 +72,7 @@ std::vector<double> FemPDE::make_k_vec_center()
 	std::vector<double> k_vec(Nvert);
 	for (size_t i = 0; i < Nelem; i++)
 	{
-		k_vec[i] = k_func(fin_elem_mesh->elements[i].get_coord_of_center_of_finelem());
+		k_vec[i] = k_func(fin_elem_mesh->elements[i].get_center_coordinates());
 	}
 	return k_vec;
 }
