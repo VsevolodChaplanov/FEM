@@ -62,9 +62,6 @@ public:
 	// Используется для конструкций CMatrix C = A * B
 	CMatrix operator=(CMatrix &Matrix_A);
 
-	// // Перегрузка оператора сложения разряженных матриц
-	// CMatrix operator+(CMatrix &other);
-
 	// Возвращает число строк матрицы
 	int size() const;
 

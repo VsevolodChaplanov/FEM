@@ -3,6 +3,14 @@
 
 
 #include "../headers/Preconditioners.h"
+#include "BoundaryElements.cpp"
+#include "Builder.cpp"
+#include "CompressedM.cpp"
+#include "FemGrid.cpp"
+#include "FemPDE.cpp"
+#include "LinElem.cpp"
+#include "Solvers.cpp"
+#include "VectorOperations.cpp"
 
 IPreconditioner* IPreconditioner::Fabric(const std::string &Precondition_method)
 {

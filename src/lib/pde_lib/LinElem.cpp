@@ -2,6 +2,14 @@
 #define __LINELEM_CPP__
 
 #include "../headers/IFiniteElem.h"
+#include "BoundaryElements.cpp"
+#include "Builder.cpp"
+#include "CompressedM.cpp"
+#include "FemGrid.cpp"
+#include "FemPDE.cpp"
+#include "Preconditioners.cpp"
+#include "Solvers.cpp"
+#include "VectorOperations.cpp"
 
 IFiniteElement* IFiniteElement::Factory(const std::vector<double> &verices, const std::vector<size_t> &GIndices, ElementVTK_Type ElementType)
 {
@@ -12,16 +20,22 @@ IFiniteElement* IFiniteElement::Factory(const std::vector<double> &verices, cons
 	return new LinElem(verices, GIndices);
 }
 
-LinElem::LinElem(const std::vector<double> &verteces, 
-	const std::vector<std::size_t> &GIdences) : global_indices(GIdences), 
-	start_point(verteces[0]),
-	length(abs(verteces[1] - verteces[0]))
+IFiniteElement::~IFiniteElement() { }
+
+LinElem::LinElem(const std::vector<double> &verteces, const std::vector<std::size_t> &GIdences)
 {
 	this->dim = 1;
 	this->n_basis = 2;
-	this->det_j = length;
 	this->element_type = LinElem::VTK_LINE;
+	this->global_indices = GIdences;
+	this->start_point = verteces[0];
+	this->length = (verteces[1] - verteces[0]);
+	this->det_j = length;
+	this->mass_matrix = {length / 3, length / 6, length / 6, length / 3};
+	this->stiffness_matrix = {1 / length, - 1 / length, - 1 / length, 1 / length};
+	this->lumped_mass_matrix = {length / 2, length / 2};
 }
+
 
 double LinElem::phi1(double* _param_point)
 {
@@ -70,6 +84,7 @@ double* LinElem::get_center_coordinates()
 	center = param_to_phys(param_center);
 	return center;
 }
+
 
 
 

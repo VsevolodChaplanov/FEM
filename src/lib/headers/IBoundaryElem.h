@@ -32,9 +32,20 @@ public:
 
 public:
 
+	// Dimension of the boundary element
 	size_t dim;
+	// Number of basis functions
 	size_t n_basis;
+	// Bound type
 	size_t bound_type;
+	// Global indices of vertexes consisting of the boundary element
+	std::vector<size_t> global_indices;
+	// Mass matrix of boundary element
+	std::vector<double> mass_matrix {1};
+	// Stiffness matrix of boundary element;
+	std::vector<double> stiffness_matrix {0};
+	// lumped mass matrix of boundary element
+	std::vector<double> lumped_mass_matrix {1};
 };
 
 // a0 - type "1" boundary condition
@@ -46,6 +57,8 @@ public:
 	enum bound_vert_types { left = 1,
 	right = 2
 	};
+	// Vertex storage to function phys_to_param;
+	std::vector<double> vertex;
 
 	// Gets only 1 vertice
 	// vertex - {x0,y0,z0}
@@ -56,30 +69,15 @@ public:
 	//	2 - right bound
 	PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type);
 	// Returns mass matrix element with local indices [i,j]
-	virtual double get_mass(size_t i, size_t j) override; 
+	double get_mass(size_t i, size_t j) override; 
 	// Returns stiffness matrix element with local indices [i,j]
-	virtual double get_stiffness(size_t i, size_t j) override;
+	double get_stiffness(size_t i, size_t j) override;
 	// Returns [i,i] element of lumped mass matrix
-	virtual double get_lumped(size_t i) override;
+	double get_lumped(size_t i) override;
 	// Returns global indices according to boundary type
-	virtual std::vector<size_t> get_g_indices_for_belem_type(size_t boundary_type) override;
+	std::vector<size_t> get_g_indices_for_belem_type(size_t boundary_type) override;
 	// Returns point in parametric space according to physical point
-	virtual double* phys_to_param(double* point) override;
-
-private:
-
-	// Global indices of vertexes consisting of the boundary element
-	std::vector<size_t> global_indices;
-	// Mass matrix of boundary element
-	std::vector<double> mass_matrix {1};
-	// Stiffness matrix of boundary element;
-	std::vector<double> stiffness_matrix {0};
-	// lumped mass matrix of boundary element
-	std::vector<double> lumped_mass_matrix {1};
-	// Vertex storage to function phys_to_param;
-	std::vector<double> vertex;
-	// Bound type 1 or 2
-	size_t bound_type;
+	double* phys_to_param(double* point) override;
 
 private: 
 

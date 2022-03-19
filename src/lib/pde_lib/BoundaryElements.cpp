@@ -3,12 +3,22 @@
 
 #include "../headers/IBoundaryElem.h"
 
-PointBoundaryElement::PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type) : vertex(vertex)
+PointBoundaryElement::PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type)
 {
+	this->vertex = vertex;
 	this->dim = 0;
 	this->n_basis = 1;
 	this->bound_type = boundary_type;
 	this->global_indices = g_index;
+}
+
+std::vector<size_t> PointBoundaryElement::get_g_indices_for_belem_type(size_t boundary_type)
+{
+	if (this->bound_type == boundary_type)
+	{
+		return this->global_indices;
+	}
+	return {};	
 }
 
 double PointBoundaryElement::get_mass(size_t i, size_t j)

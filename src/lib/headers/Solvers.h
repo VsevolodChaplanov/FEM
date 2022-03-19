@@ -5,7 +5,6 @@
 #include <iostream>
 #include "CompressedM.h"
 #include "Preconditioners.h"
-#include "../pde_lib/VectorOperations.cpp"
 
 /*-----------------------------Solvers Interface-----------------------------*/
 class IMatrixSolver

@@ -26,7 +26,6 @@ public:
 		VTK_HEXAHEDRON
 	};
 	
-	IFiniteElement();
 	static IFiniteElement* Factory(const std::vector<double> &vertices, const std::vector<std::size_t> &GIndices, ElementVTK_Type ElementType); 
 	// Returns mass matrix element with local indices [i,j]
 	virtual double get_mass(size_t i, size_t j) = 0; 
@@ -40,7 +39,7 @@ public:
 	virtual double* param_to_phys(double* p_point) = 0;
 	// Center coordinates
 	virtual double* get_center_coordinates() = 0;
-	virtual ~IFiniteElement();
+	virtual ~IFiniteElement() = 0;
 	
 
 public:
@@ -92,12 +91,12 @@ public:
 	// vertices a massive of two points [a,b] between which the finite element is constructed
 	// GIndices - global indices of points "a" and "b", they will have local indices 0 and 1 
 	LinElem(const std::vector<double> &vertices, const std::vector<std::size_t> &GIndices);
-	virtual double get_mass(size_t i, size_t j) override;														// Возвращает элемент локальной матрицы масс стояший на позиции [i,j]
-	virtual double get_stiffness(size_t i, size_t j) override;														// Возвращает элемент локальной матрицы жексткости стояший на позиции [i,j]
-	virtual double get_lumped(size_t i) override;																			// Возвращает элемент lumped mass matrix стояший на позиции [i,j]
-	virtual double* phys_to_param(double* point) override;
-	virtual double* param_to_phys(double* p_point) override;
-	virtual double* get_center_coordinates() override; 
+	double get_mass(size_t i, size_t j) override;														// Возвращает элемент локальной матрицы масс стояший на позиции [i,j]
+	double get_stiffness(size_t i, size_t j) override;														// Возвращает элемент локальной матрицы жексткости стояший на позиции [i,j]
+	double get_lumped(size_t i) override;																			// Возвращает элемент lumped mass matrix стояший на позиции [i,j]
+	double* phys_to_param(double* point) override;
+	double* param_to_phys(double* p_point) override;
+	double* get_center_coordinates() override; 
 	
 
 private: // Methods
@@ -111,10 +110,5 @@ private: // Properties
 	double start_point;
 
 public:
-
-	std::vector<std::size_t> global_indices;
-	std::vector<double> mass_matrix {length / 3, length / 6, length / 6, length / 3};			// Локальная матрица масс
-	std::vector<double> stiffness_matrix {length / 3, length / 6, length / 6, length / 3}; 	// Локальная матрица Жесткости
-	std::vector<double> lumped_mass_matrix {length / 2, length / 2}; 	// Локальная lumped mass матрица
 };
 #endif

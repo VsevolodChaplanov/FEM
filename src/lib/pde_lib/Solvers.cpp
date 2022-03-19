@@ -2,6 +2,10 @@
 #define __MATRIX_SOLVERS_CPP__
 
 #include "../headers/Solvers.h"
+#include "VectorOperations.cpp"
+#include "CompressedM.cpp"
+#include "Preconditioners.cpp"
+
 
 /*-----------------------------Realizations-----------------------------*/
 IMatrixSolver* IMatrixSolver::Fabric(const std::string& method_name)
@@ -246,7 +250,7 @@ void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vecto
 			u[i] = omega / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - omega) * Temp_U[i];
 		} // End i - filling solution vector // i
 
-		double res = SecondNorm(VDiff(Lhs * u, Rhs));
+		double res = norm_2(VDiff(Lhs * u, Rhs));
 
 		if (k % Save_steps == 0)
 		{
@@ -293,7 +297,7 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 		} // End i - filling solution vector // i
 
 
-		double res = SecondNorm(VDiff(Lhs * u, Rhs));
+		double res = norm_2(VDiff(Lhs * u, Rhs));
 
 		if (k % Save_steps == 0)
 		{
@@ -382,7 +386,7 @@ void Jacobi_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 			u[i] = (-InnerSum + Rhs[i]) / Lhs.GetValue(i,i);
 		}
 
-		double res = SecondNorm(VDiff(Lhs * u, Rhs));
+		double res = norm_2(VDiff(Lhs * u, Rhs));
 
 		if (k % Save_steps == 0)
 		{
@@ -429,7 +433,7 @@ void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 		}
 
 
-		double res = SecondNorm(VDiff(Lhs * u, Rhs));
+		double res = norm_2(VDiff(Lhs * u, Rhs));
 
 		if (k % Save_steps == 0)
 		{

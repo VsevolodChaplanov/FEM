@@ -3,6 +3,7 @@
 
 #include "../headers/CompressedM.h"
 
+
 // ============= C++ ============= //
 // ========= Реализации ========== //
 
@@ -84,6 +85,12 @@ void CMatrix::SetValue(int i, int j, double a)
 // Умонжение разреженной матрицы на вектор
 std::vector<double> CMatrix::operator*(const std::vector<double> &Vector)
 {
+	if (Vector.size() == ! N)
+	{
+		throw "Длины вектора и матрицы не совпадают";
+		std::cout << "Длины вектора и матрицы не совпадают" << std::endl;
+	}
+	
 	// Вектор в который записывается результат
 	std::vector<double> Result(N);
 	for (size_t i = 0; i < N; i++)
@@ -151,47 +158,24 @@ std::map<int, double> CMatrix::operator[](int i)
 // Используется для конструкций CMatrix C = A * B
 CMatrix CMatrix::operator=(CMatrix &Matrix_A)
 {
-	// Результат новая матрица B
-	CMatrix B(Matrix_A.size());
-
 	for (size_t i = 0; i < Matrix_A.size(); i++)
 	{
-		B[i] = Matrix_A[i];
-	} // i
-	
-	return B;
-}
-
-
-// CMatrix CMatrix::operator+(CMatrix &other)
-// {
-// 	std::size_t N = other.size();
-// 	CMatrix result(N);
-// 	for (size_t i = 0; i < N; i++)
-// 	{
-// 		for (auto elem : other[i])
-// 		{
-// 			result.SetValue(i, elem.first, result.GetValue(i, elem.first) + elem.second);
-// 		}
-// 	}
-// 	return result;
-// }
-
-void SummCM(CMatrix* A, CMatrix* B, CMatrix* Lhs)
-{
-	std::size_t N = A->size();
-	for (size_t i = 0; i < N; i++)
-	{
-		for (auto elem : (*A)[i])
-		{
-			Lhs->SetValue(i, elem.first, Lhs->GetValue(i, elem.first) + elem.second);
-		}
-		for (auto elem : (*B)[i])
-		{
-			Lhs->SetValue(i, elem.first, Lhs->GetValue(i, elem.first) + elem.second);
-		}
+		this->CompressedMatrix[i] = Matrix_A[i];
 	}
+	return *this;
 }
+// CMatrix CMatrix::operator=(const CMatrix &Matrix_A)
+// {
+// 	// Результат новая матрица B
+// 	CMatrix B(Matrix_A.size());
+
+// 	for (size_t i = 0; i < Matrix_A.size(); i++)
+// 	{
+// 		B[i] = Matrix_A[i];
+// 	} // i
+	
+// 	return B;
+// }
 
 
 // Возвращает число строк матрицы

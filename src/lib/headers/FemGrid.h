@@ -14,9 +14,9 @@ public:
 	// {x0,y0,z0,x1,y1,z1, ... , xn,yn,zn} -> length of container 3 times greater than number of vertices
 	std::vector<double> vertices;
 	// container which stores finite elements
-	std::vector<IFiniteElement> elements;
+	std::vector<IFiniteElement*> elements;
 	// container which stores boundary elements 
-	std::vector<IBoundaryElement> boundary_elements;
+	std::vector<IBoundaryElement*> boundary_elements;
 
 private:
 
@@ -35,7 +35,7 @@ public:
 	// vertices {x0,y0,z0,x1,y1,z1, ... , xn,yn,zn}
 	// elements - finite elements
 	// boundary_elements - boundary elements
-	FemGrid(size_t dim, std::vector<double> &vertices, std::vector<IFiniteElement> &elements, std::vector<IBoundaryElement> &boundary_elements);
+	FemGrid(size_t dim, std::vector<double> &vertices, std::vector<IFiniteElement*> &elements, std::vector<IBoundaryElement*> &boundary_elements);
 	// Return vector of indices of boundary elements of the specified type
 	std::vector<size_t> boundary_element_indices(size_t boundary_element_type);
 	// Approximate analytical function along mesh

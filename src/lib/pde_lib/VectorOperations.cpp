@@ -5,9 +5,35 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include "../headers/CompressedM.h"
+#include "CompressedM.cpp"
+
+
 
 // Процедуры основных векторных и матричных операций
+
+double norm_2(const std::vector<double> &vec)
+{
+	double n2 = 0;
+	for (auto elem : vec)
+	{
+		n2 += elem * elem;
+	}
+	return sqrt(n2 / (double) vec.size());
+}
+
+double max_abs(const std::vector<double> &vec)
+{
+	double max_elem = fabs(vec[0]);
+	for (auto elem : vec)
+	{
+		if (fabs(elem) > max_elem)
+		{
+			max_elem = fabs(elem);
+		}
+		
+	}
+	return max_elem;
+}
 
 // Скалярное произведение векторов
 double DotProduct(const std::vector<double> &a, const std::vector<double> &b)
@@ -70,25 +96,6 @@ void WriteInFile(const std::vector<double> &a, const std::string &Filename)
     file.close();
 }
 
-// Норма по максимальному отклонению || r ||_{max}
-double NormMax(const std::vector<double> &a, const std::vector<double> &b)
-{
-	double MaxElem = 0;
-	for (size_t i = 0; i < a.size(); i++)
-	{
-		double diff = fabs(a[i] - b[i]);
-		diff > MaxElem ? MaxElem = diff : MaxElem = MaxElem;
-	}
-	return MaxElem;
-}
-
-// Вторая норма || r ||_{2}
-double SecondNorm(const std::vector<double> &a)
-{
-	double Result = DotProduct(a,a);
-	return sqrt(Result);
-}
-
 bool CheckMatSym(CMatrix &Matrix)
 {
     bool result = true;
@@ -103,6 +110,23 @@ bool CheckMatSym(CMatrix &Matrix)
         }
     }
     return result;
+}
+
+void SummCM(CMatrix &A, CMatrix &B, CMatrix &Lhs)
+{
+	std::size_t N = A.size();
+	Lhs = A;
+	for (size_t i = 0; i < N; i++)
+	{
+		// for (auto elem : A[i])
+		// {
+		// 	Lhs.SetValue(i, elem.first, Lhs.GetValue(i, elem.first) + elem.second);
+		// }
+		for (auto elem : B[i])
+		{
+			Lhs.SetValue(i, elem.first, Lhs.GetValue(i, elem.first) + elem.second);
+		}
+	}
 }
 
 #endif

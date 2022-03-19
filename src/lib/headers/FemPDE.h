@@ -44,7 +44,7 @@ public:
 
 private:
 
-	std::vector<double> make_f_vec_center();
+	std::vector<double> make_f_vec_vert();
 	std::vector<double> make_k_vec_center();
 };
 
