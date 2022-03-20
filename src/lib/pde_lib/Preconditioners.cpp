@@ -3,47 +3,43 @@
 
 
 #include "../headers/Preconditioners.h"
-#include "BoundaryElements.cpp"
-#include "Builder.cpp"
 #include "CompressedM.cpp"
-#include "FemGrid.cpp"
-#include "FemPDE.cpp"
-#include "LinElem.cpp"
-#include "Solvers.cpp"
-#include "VectorOperations.cpp"
 
-IPreconditioner* IPreconditioner::Fabric(const std::string &Precondition_method)
+
+
+// Hadrcode
+IPreconditioner* IPreconditioner::Factory(const SolversParams* parameters)
 {
-	if (Precondition_method == "Jacobi")
+	if (parameters->precondition_method == SolversParams::Preconditioners::Jacobi_P)
 	{
-		return new Jacobi_P();
-	}
-	else if (Precondition_method == "SSOR")
+		//std::shared_ptr<IPreconditioner> preconditioner(new Jacobi_P(parameters));
+		return new Jacobi_P(parameters);
+	} else if (parameters->precondition_method == SolversParams::Preconditioners::SSOR_P)
 	{
-		return new SSOR_P();
-	}
-	else if (Precondition_method == "ISO0_1")
+		//std::shared_ptr<IPreconditioner> preconditioner(new SSOR_P(parameters));
+		return new SSOR_P(parameters);
+	} else if (parameters->precondition_method == SolversParams::Preconditioners::ILU01_P)
 	{
-		return new ISO0_1_P();
-	}
-	else if (Precondition_method == "ISO0_2")
+		//std::shared_ptr<IPreconditioner> preconditioner(new ISO0_1_P(parameters));
+		return new ISO0_1_P(parameters);
+	} else if (parameters->precondition_method == SolversParams::Preconditioners::ILU02_P)
 	{
-		return new ISO0_2_P();
+		//std::shared_ptr<IPreconditioner> preconditioner(new ISO0_2_P(parameters));
+		return new ISO0_2_P(parameters);
 	}
-	return new Jacobi_P();
+	return nullptr;
 }
 
-IPreconditioner* IPreconditioner::Fabric(const std::string &Precondition_method, const double omega)
+IPreconditioner::IPreconditioner(const SolversParams* parameters)
 {
-	SSOR_P* Preconditioner = new SSOR_P();
-	Preconditioner->SetOmega(omega);
-	return Preconditioner;
+	params = parameters;
 }
+Jacobi_P::Jacobi_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+SSOR_P::SSOR_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+ISO0_1_P::ISO0_1_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+ISO0_2_P::ISO0_2_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
 
-void SSOR_P::SetOmega(double omega)
-{
-	this->omega = omega;
-}
+
 
 std::vector<double> Jacobi_P::Precondition(CMatrix& Lhs, const std::vector<double>& Rhs)
 {
@@ -69,10 +65,10 @@ std::vector<double> SSOR_P::Precondition(CMatrix &Lhs, const std::vector<double>
 		{
 			if (elem.first < i - 1)
 			{
-				Sum += elem.second * z[elem.first] / (2 - omega);
+				Sum += elem.second * z[elem.first] / (2 - params->omega_preconditioner);
 			}			
 		}
-		z[i-1] = omega * (2 - omega) / Lhs.GetValue(i-1, i-1) * (Rhs[i-1] - Sum);
+		z[i-1] = params->omega_preconditioner * (2 - params->omega_preconditioner) / Lhs.GetValue(i-1, i-1) * (Rhs[i-1] - Sum);
 	}
 	
 
@@ -83,16 +79,14 @@ std::vector<double> SSOR_P::Precondition(CMatrix &Lhs, const std::vector<double>
 		{
 			if (elem.first > i - 1)
 			{
-				Sum += elem.second * y[elem.first] / (2 - omega);
+				Sum += elem.second * y[elem.first] / (2 - params->omega_preconditioner);
 			}				
 		}
-		y[i-1] = z[i-1] - omega * (2 - omega) / Lhs.GetValue(i-1, i-1) * Sum;
+		y[i-1] = z[i-1] - params->omega_preconditioner * (2 - params->omega_preconditioner) / Lhs.GetValue(i-1, i-1) * Sum;
 	}
 
 	return y;
 }
-
-
 
 // Диагональ предобуславливателя совпадает с диагональню исходной матрицы
 // Решается задача Matrix * y = Rhs 
@@ -207,5 +201,38 @@ std::vector<double> ISO0_2_P::Precondition(CMatrix &Lhs, const std::vector<doubl
 
 	return y;	
 }
+
+// IPreconditioner* IPreconditioner::Fabric(const std::string &Precondition_method)
+// {
+// 	if (Precondition_method == "Jacobi")
+// 	{
+// 		return new Jacobi_P();
+// 	}
+// 	else if (Precondition_method == "SSOR")
+// 	{
+// 		return new SSOR_P();
+// 	}
+// 	else if (Precondition_method == "ISO0_1")
+// 	{
+// 		return new ISO0_1_P();
+// 	}
+// 	else if (Precondition_method == "ISO0_2")
+// 	{
+// 		return new ISO0_2_P();
+// 	}
+// 	return new Jacobi_P();
+// }
+
+// IPreconditioner* IPreconditioner::Fabric(const std::string &Precondition_method, const double omega)
+// {
+// 	SSOR_P* Preconditioner = new SSOR_P();
+// 	Preconditioner->SetOmega(omega);
+// 	return Preconditioner;
+// }
+
+// void SSOR_P::SetOmega(double omega)
+// {
+// 	this->omega = omega;
+// }
 
 #endif

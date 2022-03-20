@@ -2,47 +2,46 @@
 #define __PRECONDITION_METHODS__
 
 #include "CompressedM.h"
+#include "SolverParams.h"
 #include <string>
 #include <vector>
 
+struct SolversParams;
+
 class IPreconditioner
 {
-private:
-
 protected:
 
-	std::string P_method;
+	const SolversParams* params;
 
 public:
 
+	IPreconditioner(const SolversParams* parameters);
 	virtual std::vector<double> Precondition(CMatrix& Lhs, const std::vector<double>& Rhs) = 0;
-	static IPreconditioner* Fabric(const std::string &Precondition_method);
-	static IPreconditioner* Fabric(const std::string &Precondition_method, const double omega);
+	static IPreconditioner* Factory(const SolversParams* params);
 };
 
 class Jacobi_P : public IPreconditioner
 {
 public:
 
+	Jacobi_P(const SolversParams* parameters);
 	std::vector<double> Precondition(CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 
 class SSOR_P : public IPreconditioner
 {
-protected:
-
-	double omega = 1.5;
-
 public:
 
+	SSOR_P(const SolversParams* parameters);
 	std::vector<double> Precondition(CMatrix& Lhs, const std::vector<double>& Rhs) override;
-	void SetOmega(double omega);
 };
 
 class ISO0_1_P : public IPreconditioner
 {
 public:
 
+	ISO0_1_P(const SolversParams* parameters);
 	std::vector<double> Precondition(CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 
@@ -50,6 +49,7 @@ class ISO0_2_P : public IPreconditioner
 {
 public:
 
+	ISO0_2_P(const SolversParams* parameters);
 	std::vector<double> Precondition(CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 

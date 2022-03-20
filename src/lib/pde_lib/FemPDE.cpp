@@ -11,7 +11,7 @@
 #include "Solvers.cpp"
 #include "VectorOperations.cpp"
 
-FemPDE::FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*))
+FemPDE::FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*), const SolversParams* parameters)
 {
 	this->f_func = f_analytical;
 	this->k_func = k_analytical;
@@ -22,6 +22,7 @@ FemPDE::FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), do
 	S_g.resize(Nvert);
 	lhs_g.resize(Nvert);
 	rhs_g.resize(Nvert);
+	this->parameters = parameters;
 }
 
 void FemPDE::assemble()
@@ -58,21 +59,15 @@ void FemPDE::assemble()
 	rhs_g = M_g * make_f_vec_vert();
 }   
 
-std::vector<double> FemPDE::solve(const std::string &Method, const double omega)
+std::vector<double> FemPDE::solve()
 {
 	std::vector<double> solution(this->Nvert);
-	if (omega > 0)
-	{
-		// Тут потом сделать чтобы фабрика возвращала std::unique_ptr
-		IMatrixSolver* solver = IMatrixSolver::Fabric(Method, omega);
-		solver->solve(lhs_g, rhs_g, solution);
-		return solution;
-	} else
-	{
-		IMatrixSolver* solver = IMatrixSolver::Fabric(Method);
-		solver->solve(lhs_g, rhs_g, solution);
-		return solution;
-	}
+
+	IMatrixSolver* solver = IMatrixSolver::Factory(parameters);
+	solver->solve(lhs_g, rhs_g, solution);
+	delete solver;
+	return solution;
+
 }
 
 void FemPDE::apply_boundary_condition_dirichlet(double (*u_analytical)(double*), const std::vector<size_t> &boundary_element_indices)

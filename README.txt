@@ -1,27 +1,4 @@
-set(LIB_CPPS Builder.cpp
-	CompressedM.cpp
-	#CubeElem.cpp
-	FemGrid.cpp
-	FemPDE.cpp
-	IBoundaryElem.cpp
-	LinElem.cpp
-	Preconditioners.cpp
-	#RectElem.cpp
-	Solvers.cpp
-	VecMath.cpp
-	VectorOperations.cpp
-)
+((-y1+y3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)	(x1-x3)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
+(y1-y2)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)	(-x1+x2)/(-x2 y1+x3 y1+x1 y2-x3 y2-x1 y3+x2 y3)
 
-set(HEADERS Builder.h
-	CompressedM.h
-	# CubeElem.h
-	FemGrid.h
-	FemPDE.h
-	IBoundaryElem.h
-	LinElem.h
-	Preconditioners.h
-	# RectElem.h
-	Solvers.h
-	VecMath.h
-	VectorOperations.h
 )

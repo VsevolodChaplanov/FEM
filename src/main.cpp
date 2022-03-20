@@ -23,14 +23,17 @@ int main(int argc, char const *argv[])
 	FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, 100); // Для ГУ на границе стоит элемент порядка ниже
 	// femgtidlinear->assign_boundary_type(selector , type)
 
-	FemPDE fempde(&femgridlinear, f_fun, k_fun); 
+	SolversParams* params = new SolversParams;
+	params->set_params(SolversParams::Methods::Thomas, SolversParams::Preconditioners::None, 1000, 1.e-5, 10);
+
+	FemPDE fempde(&femgridlinear, f_fun, k_fun, params); 
 	// fempde->set_bc() 
 	fempde.assemble();
 	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(1));
 	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(2));
 	// 	fempde->apply_boundary_condition_dirichlet(u_exact, femgridlinear->boundary_element_indices()); All
 
-	std::vector<double> sol = fempde.solve("Thomas"); // вектор решения ин в самом методе
+	std::vector<double> sol = fempde.solve(); // вектор решения ин в самом методе
 
 	// Approximate analytical function along calculation area
 	std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);

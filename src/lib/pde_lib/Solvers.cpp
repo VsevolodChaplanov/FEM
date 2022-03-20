@@ -5,94 +5,64 @@
 #include "VectorOperations.cpp"
 #include "CompressedM.cpp"
 #include "Preconditioners.cpp"
+#include "SolverParams.cpp"
 
 
 /*-----------------------------Realizations-----------------------------*/
-IMatrixSolver* IMatrixSolver::Fabric(const std::string& method_name)
+
+// Hardcode
+IMatrixSolver* IMatrixSolver::Factory(const SolversParams* parameters)
 {
-	if (method_name == "GD")
+	if (parameters->solve_method == SolversParams::Thomas && parameters->precondition_method == SolversParams::Preconditioners::None)
+	{	
+		return new Thomas_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::Jacobi && parameters->precondition_method == SolversParams::Preconditioners::None)
 	{
-		return new GD_Solver();
-	} 
-	else if (method_name == "MR")
+		// std::shared_ptr<IMatrixSolver> solver(new Jacobi_Solver(parameters));
+		return new Jacobi_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::Seidel && parameters->precondition_method == SolversParams::Preconditioners::None)
 	{
-		return new MR_Solver();
-	} 
-	else if (method_name == "CG")
+		// std::shared_ptr<IMatrixSolver> solver(new Seidel_Solver(parameters));
+		return new Seidel_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::SOR && parameters->precondition_method == SolversParams::Preconditioners::None)
 	{
-		return new CG_Solver();
-	} 
-	else if (method_name == "SSOR")
+		// std::shared_ptr<IMatrixSolver> solver(new SOR_Solver(parameters));
+		return new SOR_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::SSOR && parameters->precondition_method == SolversParams::Preconditioners::None)
 	{
-		return new SSOR_Solver();
-	} 
-	else if (method_name == "SOR")
+		// std::shared_ptr<IMatrixSolver> solver(new SSOR_Solver(parameters));
+		return new SSOR_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::MR && parameters->precondition_method == SolversParams::Preconditioners::None)
 	{
-		return new SOR_Solver();
-	} 
-	else if (method_name == "Seidel")
+		// std::shared_ptr<IMatrixSolver> solver(new MR_Solver(parameters));
+		return new MR_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::GD && parameters->precondition_method == SolversParams::Preconditioners::None)
 	{
-		return new Seidel_Solver();
+		// std::shared_ptr<IMatrixSolver> solver(new GD_Solver(parameters));
+		return new GD_Solver(parameters);
+	} else if (parameters->solve_method == SolversParams::Methods::CG && parameters->precondition_method == SolversParams::Preconditioners::None)
+	{
+		// std::shared_ptr<IMatrixSolver> solver(new CG_Solver(parameters));
+		return new CG_Solver(parameters);
+	} else if (parameters->precondition_method != SolversParams::Preconditioners::None)
+	{
+		//std::shared_ptr<IPreconditioner> preconditioner = IPreconditioner::Factory(parameters);
+		if (parameters->solve_method == SolversParams::Methods::GD)
+		{
+			//std::shared_ptr<IMatrixSolver> solver(new GD_Solver_P(parameters, preconditioner));
+			return new GD_Solver_P(parameters, IPreconditioner::Factory(parameters));
+		} else if (parameters->solve_method == SolversParams::Methods::CG) 
+		{
+			//std::shared_ptr<IMatrixSolver> solver(new CG_Solver_P(parameters, preconditioner));
+			return new GD_Solver_P(parameters, IPreconditioner::Factory(parameters));
+		}
 	}
-	else if (method_name == "Jacobi")
-	{
-		return new Jacobi_Solver();
-	}
-	else if (method_name == "LU")
-	{
-		return new LU_Solver();
-	}
-	else if (method_name == "LDU")
-	{
-		return new LDU_Solver();
-	}
-	return new Thomas_Solver();
+	return nullptr;
 }
 
-IMatrixSolver* IMatrixSolver::Fabric(const std::string &method_name, const double omega)
+IMatrixSolver::IMatrixSolver(const SolversParams* parameters)
 {
-	if (method_name == "SSOR")
-	{
-		SSOR_Solver* solver = new SSOR_Solver();
-		solver->SetOmega(omega);
-		return solver;
-	} else if (method_name == "SOR")
-	{
-		SOR_Solver* solver = new SOR_Solver();
-		solver->SetOmega(omega);
-		return solver;
-	}
-	SOR_Solver* solver = new SOR_Solver();
-	solver->SetOmega(omega);
-	return solver;
-}
-
-IMatrixSolver* IMatrixSolver::Fabric_P(const std::string &method_name, const std::string &Precondition_method)
-{
-	IPreconditioner* Preconditioner = IPreconditioner::Fabric(Precondition_method);
-	if (method_name == "CG")
-	{
-		return new CG_Solver_P(Preconditioner);
-	}
-	else if(method_name == "GD")
-	{
-		return new GD_Solver_P(Preconditioner);
-	}
-	return new GD_Solver_P(Preconditioner);
-}
-
-IMatrixSolver* IMatrixSolver::Fabric_P(const std::string &method_name, const std::string &Precondition_method, const double omega)
-{
-	IPreconditioner* Preconditioner = IPreconditioner::Fabric(Precondition_method, omega);
-	if (method_name == "CG")
-	{
-		return new CG_Solver_P(Preconditioner);
-	}
-	else if(method_name == "GD")
-	{
-		return new GD_Solver_P(Preconditioner);
-	}
-	return new GD_Solver_P(Preconditioner);
+	this->parameters = parameters;
 }
 
 void CG_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
@@ -111,7 +81,7 @@ void CG_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 	double lambda = Norm / pAp;
 	u = VDiff(u, Mult_N(p, lambda));
 
-	for (size_t k = 1; k < MAX_ITERATIONS; k++)
+	for (size_t k = 1; k < parameters->MAX_ITERATIONS; k++)
 	{
 		r = VDiff(r, Mult_N(Ap, lambda));
 		double NewNorm = DotProduct(r,r);
@@ -122,11 +92,11 @@ void CG_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 		lambda = NewNorm / pAp;
 		u = VDiff(u, Mult_N(p, lambda));
 		Norm = NewNorm;
-		if (k % Save_steps == 0)
+		if (k % parameters->Save_steps == 0)
 		{
 			R.push_back(sqrt(Norm));
 		}
-		if(sqrt(Norm) < eps * eps)
+		if(sqrt(Norm) < parameters->eps * parameters->eps)
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
@@ -143,7 +113,7 @@ void GD_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 	std::vector<double> r;
 	std::vector<double> R; 					// Для отслеживания нормы невязки с итерацией
 
-	for (size_t k = 0; k < MAX_ITERATIONS; k++)
+	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{   
 		r = VDiff(Lhs * u, Rhs);
 		double Norm = DotProduct(r,r);
@@ -151,13 +121,13 @@ void GD_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 
 		u = VDiff(u, Mult_N(r, gamma));
 
-		if(k % Save_steps == 0) 
+		if(k % parameters->Save_steps == 0) 
 		{
 			R.push_back(sqrt(Norm));
 		} 
 		
 		// Условие выхода из цикла
-		if(sqrt(Norm) < (eps))
+		if(sqrt(Norm) < (parameters->eps))
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
@@ -174,7 +144,7 @@ void MR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
     // Для отслеживания нормы невязки с итерацией
     std::vector <double> R;
 
-    for (size_t k = 0; k < MAX_ITERATIONS; k++)
+    for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
     {
         r = VDiff(Lhs * u, Rhs);
 
@@ -184,12 +154,12 @@ void MR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
         
         double Norm = sqrt(DotProduct(r,r));
 
-        if(k % Save_steps == 0)
+        if(k % parameters->Save_steps == 0)
         {
             R.push_back(Norm);
         } 
 
-        if(Norm < eps)
+        if(Norm < parameters->eps)
         {
             std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
             std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
@@ -206,7 +176,7 @@ void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vecto
 	std::vector<double> r(N, 0.);
 
 	double start_time = clock();
-	for (size_t k = 0; k < MAX_ITERATIONS; k++)
+	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{
 		// Forward Propogation
 		for (size_t i = 0; i < N; i++)
@@ -226,7 +196,7 @@ void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vecto
 				} // U * u
 			} // End U * u & L * Temp_U // el
 			
-			Temp_U[i] = omega / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - omega) * u[i];
+			Temp_U[i] = parameters->omega_solver / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - parameters->omega_solver) * u[i];
 		} // End i - filling solution vector // i
 
 		// Back Propogation
@@ -247,17 +217,17 @@ void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vecto
 				} // U * u
 			} // End U * u & L * Temp_U // el
 			
-			u[i] = omega / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - omega) * Temp_U[i];
+			u[i] = parameters->omega_solver / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - parameters->omega_solver) * Temp_U[i];
 		} // End i - filling solution vector // i
 
 		double res = norm_2(VDiff(Lhs * u, Rhs));
 
-		if (k % Save_steps == 0)
+		if (k % parameters->Save_steps == 0)
 		{
 			R.push_back(res);
 		}
 
-		if (res< eps)
+		if (res< parameters->eps)
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
@@ -274,7 +244,7 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 	std::vector<double> r(N, 0.);
 
 	double start_time = clock();
-	for (size_t k = 0; k < MAX_ITERATIONS; k++)
+	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{
 		for (size_t i = 0; i < N; i++)
 		{
@@ -293,18 +263,18 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 				} // U * u
 			} // End U * u & L * Temp_U // el
 			
-			Temp_U[i] = omega / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - omega) * u[i];
+			Temp_U[i] = parameters->omega_solver / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - parameters->omega_solver) * u[i];
 		} // End i - filling solution vector // i
 
 
 		double res = norm_2(VDiff(Lhs * u, Rhs));
 
-		if (k % Save_steps == 0)
+		if (k % parameters->Save_steps == 0)
 		{
 			R.push_back(res);
 		}
 
-		if (res < eps)
+		if (res < parameters->eps)
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
@@ -314,16 +284,6 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 
 		u = Temp_U;		
 	} // Iterations cycle // k
-}
-
-void SSOR_Solver::SetOmega(double omega)
-{
-	this->omega = omega;
-}
-
-void SOR_Solver::SetOmega(double omega)
-{
-	this->omega = omega;
 }
 
 void Thomas_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
@@ -369,7 +329,7 @@ void Jacobi_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 	std::size_t N = Lhs.size();
 	std::vector<double> u_temp(N, 0.);
 
-	for (size_t k = 0; k < MAX_ITERATIONS; k++)
+	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{
 		for (size_t i = 0; i < N; i++)
 		{
@@ -388,13 +348,13 @@ void Jacobi_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 
 		double res = norm_2(VDiff(Lhs * u, Rhs));
 
-		if (k % Save_steps == 0)
+		if (k % parameters->Save_steps == 0)
 		{
 			R.push_back(res);
 		}
 		
 
-		if (res < eps)
+		if (res < parameters->eps)
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
@@ -410,7 +370,7 @@ void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 	std::vector <double> U(N, 0.);
 	double start_time = clock();
 
-	for (size_t k = 0; k < MAX_ITERATIONS; k++)
+	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{
 		for (size_t i = 0; i < N; i++)
 		{
@@ -435,12 +395,12 @@ void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 
 		double res = norm_2(VDiff(Lhs * u, Rhs));
 
-		if (k % Save_steps == 0)
+		if (k % parameters->Save_steps == 0)
 		{
 			R.push_back(res);
 		}
 
-		if (res < eps)
+		if (res < parameters->eps)
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
@@ -593,7 +553,7 @@ void CG_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
 	double lambda = (DotProduct(p,r)) / (DotProduct(p, Ap));
 	u = VDiff(u, Mult_N(p, lambda));
 
-	for (size_t k = 0; k < MAX_ITERATIONS; k++)
+	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{	
 		r = VDiff(r, Mult_N(Ap, lambda));
 		w = Preconditioner->Precondition(Lhs, r);
@@ -607,13 +567,13 @@ void CG_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
 		lambda = rw / pAp;
 		u = VDiff(u, Mult_N(p, lambda));
 
-        if(k % Save_steps == 0)
+        if(k % parameters->Save_steps == 0)
         {
             //Y_iter.push_back(Y);
             R.push_back(sqrt(Norm2));
         } 
 
-		if(sqrt(Norm2) < eps * eps)
+		if(sqrt(Norm2) < parameters->eps * parameters->eps)
         {
             std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
             std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
@@ -632,7 +592,7 @@ void GD_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
     // Для отслеживания нормы невязки с итерацией
     std::vector <double> R;
 
-    for (size_t k = 0; k < MAX_ITERATIONS; k++)
+    for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
     {   
         // r = Ay-B
         r = VDiff(Lhs * u, Rhs);
@@ -643,13 +603,13 @@ void GD_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
 
         u = VDiff(u, Mult_N(r, gamma));
 
-        if(k % Save_steps == 0)
+        if(k % parameters->Save_steps == 0)
         {
             //Y_iter.push_back(Y);
             R.push_back(sqrt(Norm2));
         } 
 
-        if(sqrt(Norm2) < eps)
+        if(sqrt(Norm2) < parameters->eps)
         {
             std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
             std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
@@ -659,14 +619,116 @@ void GD_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
     }
 }
 
-CG_Solver_P::CG_Solver_P(IPreconditioner* Preconditioner)
+CG_Solver_P::CG_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner) : IMatrixSolver(parameters)
 {
 	this->Preconditioner = Preconditioner;
 }
 
-GD_Solver_P::GD_Solver_P(IPreconditioner* Preconditioner)
+GD_Solver_P::GD_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner) : IMatrixSolver(parameters)
 {
 	this->Preconditioner = Preconditioner;
 }
+
+// IMatrixSolver* IMatrixSolver::Fabric(const std::string& method_name)
+// {
+// 	if (method_name == "GD")
+// 	{
+// 		return new GD_Solver();
+// 	} 
+// 	else if (method_name == "MR")
+// 	{
+// 		return new MR_Solver();
+// 	} 
+// 	else if (method_name == "CG")
+// 	{
+// 		return new CG_Solver();
+// 	} 
+// 	else if (method_name == "SSOR")
+// 	{
+// 		return new SSOR_Solver();
+// 	} 
+// 	else if (method_name == "SOR")
+// 	{
+// 		return new SOR_Solver();
+// 	} 
+// 	else if (method_name == "Seidel")
+// 	{
+// 		return new Seidel_Solver();
+// 	}
+// 	else if (method_name == "Jacobi")
+// 	{
+// 		return new Jacobi_Solver();
+// 	}
+// 	else if (method_name == "LU")
+// 	{
+// 		return new LU_Solver();
+// 	}
+// 	else if (method_name == "LDU")
+// 	{
+// 		return new LDU_Solver();
+// 	}
+// 	return new Thomas_Solver();
+// }
+
+// IMatrixSolver* IMatrixSolver::Fabric(const std::string &method_name, const double omega)
+// {
+// 	if (method_name == "SSOR")
+// 	{
+// 		SSOR_Solver* solver = new SSOR_Solver();
+// 		solver->SetOmega(omega);
+// 		return solver;
+// 	} else if (method_name == "SOR")
+// 	{
+// 		SOR_Solver* solver = new SOR_Solver();
+// 		solver->SetOmega(omega);
+// 		return solver;
+// 	}
+// 	SOR_Solver* solver = new SOR_Solver();
+// 	solver->SetOmega(omega);
+// 	return solver;
+// }
+
+// IMatrixSolver* IMatrixSolver::Fabric_P(const std::string &method_name, const std::string &Precondition_method)
+// {
+// 	IPreconditioner* Preconditioner = IPreconditioner::Fabric(Precondition_method);
+// 	if (method_name == "CG")
+// 	{
+// 		return new CG_Solver_P(Preconditioner);
+// 	}
+// 	else if(method_name == "GD")
+// 	{
+// 		return new GD_Solver_P(Preconditioner);
+// 	}
+// 	return new GD_Solver_P(Preconditioner);
+// }
+
+// IMatrixSolver* IMatrixSolver::Fabric_P(const std::string &method_name, const std::string &Precondition_method, const double omega)
+// {
+// 	IPreconditioner* Preconditioner = IPreconditioner::Fabric(Precondition_method, omega);
+// 	if (method_name == "CG")
+// 	{
+// 		return new CG_Solver_P(Preconditioner);
+// 	}
+// 	else if(method_name == "GD")
+// 	{
+// 		return new GD_Solver_P(Preconditioner);
+// 	}
+// 	return new GD_Solver_P(Preconditioner);
+// }
+
+// void SolversParams_SOR_SSOR::set_params( SolversParams::Methods method = Thomas,
+// 	SolversParams::Preconditioners precondition_method = None,
+// 	size_t MAX_ITERATIONS = 10000000,
+// 	double eps = 1.e-5,
+// 	size_t Save_steps = 10,
+// 	double omega = 1.95)
+// {
+// 	solve_method = method;
+// 	precondition_method = precondition_method;
+// 	MAX_ITERATIONS = MAX_ITERATIONS;
+// 	eps = eps;
+// 	Save_steps = Save_steps;
+// 	omega = omega;
+// }
 
 #endif

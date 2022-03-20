@@ -3,25 +3,24 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 #include "CompressedM.h"
 #include "Preconditioners.h"
+#include "SolverParams.h"
 
 /*-----------------------------Solvers Interface-----------------------------*/
 class IMatrixSolver
 {
 protected:
 
-	const std::size_t MAX_ITERATIONS = 10000000;
-	const double eps = 0.0001;
-	std::size_t Save_steps = 10;
+	const SolversParams* parameters;
 	std::vector<double> R;
 
 public:
+
+	static IMatrixSolver* Factory(const SolversParams* parameters);
+	IMatrixSolver(const SolversParams* parameters);
 	virtual void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) = 0;
-	static IMatrixSolver* Fabric(const std::string&);
-	static IMatrixSolver* Fabric(const std::string&, const double omega);
-	static IMatrixSolver* Fabric_P(const std::string&, const std::string&);
-	static IMatrixSolver* Fabric_P(const std::string&, const std::string&, const double omega);
 };
 /*-----------------------------Solvers Interface-----------------------------*/
 
@@ -30,6 +29,8 @@ public:
 class GD_Solver : public IMatrixSolver
 {
 public:
+
+	GD_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Gradient decent solver-----------------------------*/
@@ -39,6 +40,8 @@ public:
 class MR_Solver : public IMatrixSolver
 {
 public:
+
+	MR_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Minimal residuals solver-----------------------------*/
@@ -48,6 +51,8 @@ public:
 class CG_Solver : public IMatrixSolver
 {
 public:
+
+	CG_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Conjugate gradients solver-----------------------------*/
@@ -56,13 +61,10 @@ public:
 /*-----------------------------Symmetric Successive over relaxation solver-----------------------------*/
 class SSOR_Solver : public IMatrixSolver
 {
-protected:
-
-	double omega = 1.95;
-
 public:
+
+	SSOR_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
-	void SetOmega(double omega);
 };
 /*-----------------------------Symmetric Successive over relaxation solver-----------------------------*/
 
@@ -70,13 +72,10 @@ public:
 /*-----------------------------Successive over relaxation solver-----------------------------*/
 class SOR_Solver : public IMatrixSolver
 {
-protected:
-
-	double omega = 1.95;
-
 public:
+
+	SOR_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
-	void SetOmega(double omega);
 };
 /*-----------------------------Successive over relaxation solver-----------------------------*/
 
@@ -85,6 +84,8 @@ public:
 class Seidel_Solver : public IMatrixSolver
 {
 public:
+
+	Seidel_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Seidel-Gauss solver-----------------------------*/
@@ -94,6 +95,8 @@ public:
 class Jacobi_Solver : public IMatrixSolver
 {
 public:
+
+	Jacobi_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Jacobi solver-----------------------------*/
@@ -107,6 +110,8 @@ protected:
 	bool CheckTridiagonal(CMatrix& Lhs);
 
 public:
+
+	Thomas_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Thomas solver-----------------------------*/
@@ -121,6 +126,7 @@ protected:
 
 public:
 
+	LU_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u) override;
 
 };
@@ -136,6 +142,7 @@ protected:
 
 public:
 
+	LDU_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------LDU factorization solver-----------------------------*/
@@ -151,7 +158,7 @@ protected:
 	IPreconditioner* Preconditioner;
 public:
 
-	GD_Solver_P(IPreconditioner* Preconditioner);
+	GD_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner);
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Gradient decent solver (P)-----------------------------*/
@@ -164,10 +171,46 @@ protected:
 	IPreconditioner* Preconditioner;
 public:
 
-	CG_Solver_P(IPreconditioner* Preconditioner);
+	CG_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner);
 	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Conjugate gradients solver (P)-----------------------------*/
 
+
+// Оставил пока 1 структуру т.к. не знаю пока как хорошо сделать чтобы методы SOR SSOR и предобсулавливатель SSOR испольщовали правильные константы
+
+
+// struct SolversParams_SOR_SSOR : public SolversParams
+// {
+// public:
+// 	double omega_solver = 1.95;	
+// 	double omega_preconditioner = 1.95;	
+
+// public:
+
+// 	// Constructor with default params
+// 	// 	Method - Thomas;
+// 	// 	Without precondition
+// 	// 	MAX_ITERATIONS = 10000000; 
+// 	// 	eps = 1.e-5;
+// 	// 	Save_steps = 10;
+// 	// 	omega = 1.95
+// 	SolversParams_SOR_SSOR();
+// 	// Constuctor with selected params
+// 	SolversParams_SOR_SSOR(SolversParams::Methods method,
+// 		SolversParams::Preconditioners precondition_method,
+// 		size_t max_iterations,
+// 		double eps,
+// 		size_t save_steps, 
+// 		double omega);
+
+// 	// Set params for SLE solver
+// 	void set_params( SolversParams::Methods method = Thomas,
+// 	SolversParams::Preconditioners precondition_method = None,
+// 	size_t max_iterations = 10000000,
+// 	double eps = 1.e-5,
+// 	size_t save_steps = 10, 
+// 	double omega = 1.95 );
+// };
 
 #endif

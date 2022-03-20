@@ -23,6 +23,8 @@ private:
 	std::function<double(double*)> k_func;
 	std::function<double(double*)> u_exact;
 
+	const SolversParams* parameters;
+
 	size_t Nelem;
 	size_t Nvert;
 
@@ -37,9 +39,9 @@ private:
 	
 public:
 
-	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*));
+	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*), const SolversParams* parameters);
 	void assemble();
-	std::vector<double> solve(const std::string &Method, const double omega = 0);
+	std::vector<double> solve();
 	void apply_boundary_condition_dirichlet(double (*u_analytical)(double*), const std::vector<size_t> &boundary_element_indices);
 
 private:

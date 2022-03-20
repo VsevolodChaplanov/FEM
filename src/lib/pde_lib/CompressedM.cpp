@@ -9,13 +9,13 @@
 
 CMatrix::CMatrix() { }
 
-CMatrix::CMatrix(const int &N)
+CMatrix::CMatrix(size_t N)
 {
 	this->N = N;
 	CompressedMatrix.resize(N);
 }
 
-CMatrix::CMatrix(const int &N, const std::string &Random)
+CMatrix::CMatrix(size_t N, const std::string &Random)
 {
 	this->N = N;
 	std::random_device rd;  // Не детерминированный генератор
@@ -61,7 +61,7 @@ CMatrix::CMatrix(const int &N, const std::string &Random)
 }
 
 // Получить элемент на месте [i,j]
-double CMatrix::GetValue(const int i, const int j) const 
+double CMatrix::GetValue(size_t i, size_t j) const 
 {
 	// Такой алгоритм быстрее чем 
 	// return CompressedMatrix[i][j]; Не понятно почему
@@ -77,13 +77,13 @@ double CMatrix::GetValue(const int i, const int j) const
 }
 
 // Добавить элемент (а) в матрицу на место [i,j] 
-void CMatrix::SetValue(int i, int j, double a)
+void CMatrix::SetValue(size_t i, size_t j, double a)
 {
 	CompressedMatrix[i][j] = a;
 }
 
 // Умонжение разреженной матрицы на вектор
-std::vector<double> CMatrix::operator*(const std::vector<double> &Vector)
+std::vector<double> CMatrix::operator*(const std::vector<double> &Vector) const
 {
 	if (Vector.size() == ! N)
 	{
@@ -109,7 +109,7 @@ std::vector<double> CMatrix::operator*(const std::vector<double> &Vector)
 }
 
 // Умножение матрицы на число
-CMatrix CMatrix::operator*(const double &a)
+CMatrix CMatrix::operator*(const double a) const
 {
 	// Возвращается новая матрица
 	CMatrix Result(N);
@@ -124,7 +124,7 @@ CMatrix CMatrix::operator*(const double &a)
 }
 
 // Умножение матриц разряженного типа
-CMatrix CMatrix::operator*(CMatrix &Matrix)
+CMatrix CMatrix::operator*(CMatrix &Matrix) const
 {
 	// Возвращается новая матрица
 	CMatrix Result(N);
@@ -136,7 +136,8 @@ CMatrix CMatrix::operator*(CMatrix &Matrix)
 			double Sum = 0;
 			for (auto elem : CompressedMatrix[i]) 
 			{
-				Sum += CompressedMatrix[i][elem.first] * Matrix.GetValue(elem.first, j);
+				// ! Тут поменял
+				Sum += elem.second * Matrix.GetValue(elem.first, j);
 			} // elem 
 			if (Sum != 0)
 			{
@@ -149,7 +150,7 @@ CMatrix CMatrix::operator*(CMatrix &Matrix)
 
 // Перегрузка скобок, т.к. часто необходимо обращаться к строкам матрицы
 // Так будет быстрее чем GetValue и удобней
-std::map<int, double> CMatrix::operator[](int i)
+std::map<size_t, double> CMatrix::operator[](size_t i) const
 {
 	return CompressedMatrix[i];
 }
@@ -179,18 +180,18 @@ CMatrix CMatrix::operator=(CMatrix &Matrix_A)
 
 
 // Возвращает число строк матрицы
-int CMatrix::size() const
+size_t CMatrix::size() const
 {
 	return this->N;
 }
 
-void CMatrix::resize(const std::size_t& N)
+void CMatrix::resize(size_t N)
 {
 	CompressedMatrix.resize(N);
 	this->N = N;
 }
 
-void CMatrix::SetZeroRow(int i)
+void CMatrix::SetZeroRow(size_t i)
 {
 	CompressedMatrix[i].clear();
 }
