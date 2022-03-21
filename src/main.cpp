@@ -6,17 +6,17 @@
 #include "lib/headers/VectorOperations.h"
 
 
-double u_ex(double * point)
+double u_ex(const double* point)
 {
 	return sin(9 * (point[0]+0.2) * (point[0]+0.2));
 }
 
-double f_fun(double* point)
+double f_fun(const double* point)
 {
 	return (point[0]+1.2) * u_ex(point);
 }
 
-double k_fun(double* point)
+double k_fun(const double* point)
 {
 	return 1.0 / (18 * 18 * (point[0] + 0.2));
 }

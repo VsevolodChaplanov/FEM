@@ -27,7 +27,7 @@ std::vector<size_t> FemGrid::boundary_element_indices(size_t boundary_element_ty
 	return global_indices;
 }
 
-std::vector<double> FemGrid::approximate(double (*analytical_func)(double*)) const
+std::vector<double> FemGrid::approximate(double (*analytical_func)(const double*)) const
 {
 	std::vector<double> appr_an_func;
 	for (size_t i = 0; i < vertices_number; i++)

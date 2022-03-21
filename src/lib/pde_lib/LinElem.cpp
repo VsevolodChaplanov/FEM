@@ -65,6 +65,7 @@ double* LinElem::get_center_coordinates() const
 	double* center = new double[1];
 	double* param_center = new double{0.5};
 	center = param_to_phys(param_center);
+	delete[] param_center;
 	return center;
 }
 

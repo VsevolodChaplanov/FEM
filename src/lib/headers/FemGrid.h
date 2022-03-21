@@ -39,7 +39,7 @@ public:
 	// Return vector of indices of boundary elements of the specified type
 	std::vector<size_t> boundary_element_indices(size_t boundary_element_type) const;
 	// Approximate analytical function along mesh
-	std::vector<double> approximate(double (*analytical_func)(double *)) const;
+	std::vector<double> approximate(double (*analytical_func)(const double *)) const;
 	// Returns coordinates of center of finite element with index i
 	double* get_coord_of_center_of_finelem(size_t i) const;
 	// Returns number of finite elements in f.el.mesh
