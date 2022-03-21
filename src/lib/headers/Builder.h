@@ -5,7 +5,6 @@
 #include <cmath>
 #include "FemGrid.h"
 
-
 class Builder
 {
 public:

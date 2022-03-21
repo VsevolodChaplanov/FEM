@@ -1,13 +1,7 @@
-#ifndef __VECTOROPERATIONS__
-#define __VECTOROPERATIONS__
+// #ifndef __VECTOROPERATIONS_CPP__
+// #define __VECTOROPERATIONS_CPP__
 
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include "CompressedM.cpp"
-
-
+#include "../headers/VectorOperations.h"
 
 // Процедуры основных векторных и матричных операций
 
@@ -36,7 +30,7 @@ double max_abs(const std::vector<double> &vec)
 }
 
 // Скалярное произведение векторов
-double DotProduct(const std::vector<double> &a, const std::vector<double> &b)
+double dot_product(const std::vector<double> &a, const std::vector<double> &b)
 {
     double Result = 0;
 
@@ -49,7 +43,7 @@ double DotProduct(const std::vector<double> &a, const std::vector<double> &b)
 }
 
 // Умножение вектора на число
-std::vector<double> Mult_N(const std::vector<double> &a, const double &b)
+std::vector<double> mult_n(const std::vector<double> &a, const double &b)
 {
     std::vector<double> Result(a.size(), 0.);
     for (size_t i = 0; i < a.size(); i++)
@@ -60,7 +54,7 @@ std::vector<double> Mult_N(const std::vector<double> &a, const double &b)
 }
 
 // Сложение векторов
-std::vector<double> VSum(const std::vector <double> &a, const std::vector <double> &b)
+std::vector<double> vector_sum(const std::vector <double> &a, const std::vector <double> &b)
 {
     std::vector<double> Result(a.size(), 0.);
     for (size_t i = 0; i < a.size(); i++)
@@ -71,7 +65,7 @@ std::vector<double> VSum(const std::vector <double> &a, const std::vector <doubl
 }
 
 // Вычитание векторов
-std::vector<double> VDiff(const std::vector<double> &a, const std::vector<double> &b)
+std::vector<double> vector_diff(const std::vector<double> &a, const std::vector<double> &b)
 {
     std::vector<double> Result(a.size(), 0.);
     for (size_t i = 0; i < a.size(); i++)
@@ -82,7 +76,7 @@ std::vector<double> VDiff(const std::vector<double> &a, const std::vector<double
 }
 
 // Запись вектора a в файл с названием Filename.csv
-void WriteInFile(const std::vector<double> &a, const std::string &Filename)
+void write_in_file(const std::vector<double> &a, const std::string &Filename)
 {
 	std::ofstream file;
     file.open(Filename + ".csv");
@@ -96,7 +90,7 @@ void WriteInFile(const std::vector<double> &a, const std::string &Filename)
     file.close();
 }
 
-bool CheckMatSym(CMatrix &Matrix)
+bool check_matrix_sym(CMatrix &Matrix)
 {
     bool result = true;
     for (size_t i = 0; i < Matrix.size(); i++)
@@ -112,7 +106,7 @@ bool CheckMatSym(CMatrix &Matrix)
     return result;
 }
 
-void SummCM(CMatrix &A, CMatrix &B, CMatrix &Lhs)
+void summ_cm(CMatrix &A, CMatrix &B, CMatrix &Lhs)
 {
 	std::size_t N = A.size();
 	Lhs = A;
@@ -129,4 +123,4 @@ void SummCM(CMatrix &A, CMatrix &B, CMatrix &Lhs)
 	}
 }
 
-#endif
+// #endif

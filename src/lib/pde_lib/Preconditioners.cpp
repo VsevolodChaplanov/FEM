@@ -1,9 +1,9 @@
-#ifndef __PRECONDITION_METHODS_CPP__
-#define __PRECONDITION_METHODS_CPP__
+// #ifndef __PRECONDITION_METHODS_CPP__
+// #define __PRECONDITION_METHODS_CPP__
 
 
 #include "../headers/Preconditioners.h"
-#include "CompressedM.cpp"
+#include "../headers/CompressedM.h"
 
 
 
@@ -34,14 +34,16 @@ IPreconditioner::IPreconditioner(const SolversParams* parameters)
 {
 	params = parameters;
 }
+
 Jacobi_P::Jacobi_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+
 SSOR_P::SSOR_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+
 ISO0_1_P::ISO0_1_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+
 ISO0_2_P::ISO0_2_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
 
-
-
-std::vector<double> Jacobi_P::Precondition(CMatrix& Lhs, const std::vector<double>& Rhs)
+std::vector<double> Jacobi_P::Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs)
 {
 	std::vector<double> Result(Rhs.size());
 	for (size_t i = 0; i < Rhs.size(); i++)
@@ -51,7 +53,7 @@ std::vector<double> Jacobi_P::Precondition(CMatrix& Lhs, const std::vector<doubl
 	return Result;
 }
 
-std::vector<double> SSOR_P::Precondition(CMatrix &Lhs, const std::vector<double> &Rhs)
+std::vector<double> SSOR_P::Precondition(const CMatrix &Lhs, const std::vector<double> &Rhs)
 {
 	size_t N = Lhs.size();
 
@@ -91,7 +93,7 @@ std::vector<double> SSOR_P::Precondition(CMatrix &Lhs, const std::vector<double>
 // Диагональ предобуславливателя совпадает с диагональню исходной матрицы
 // Решается задача Matrix * y = Rhs 
 // Как Bw = r
-std::vector<double> ISO0_1_P::Precondition(CMatrix &Lhs, const std::vector<double> &Rhs)
+std::vector<double> ISO0_1_P::Precondition(const CMatrix &Lhs, const std::vector<double> &Rhs)
 {
 
 	size_t N = Lhs.size();
@@ -142,7 +144,7 @@ std::vector<double> ISO0_1_P::Precondition(CMatrix &Lhs, const std::vector<doubl
 	return y;
 }
 
-std::vector<double> ISO0_2_P::Precondition(CMatrix &Lhs, const std::vector<double> &Rhs)
+std::vector<double> ISO0_2_P::Precondition(const CMatrix &Lhs, const std::vector<double> &Rhs)
 {
 	size_t N = Lhs.size();
 	std::vector<double> y(N);
@@ -235,4 +237,4 @@ std::vector<double> ISO0_2_P::Precondition(CMatrix &Lhs, const std::vector<doubl
 // 	this->omega = omega;
 // }
 
-#endif
+// #endif

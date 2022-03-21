@@ -1,6 +1,10 @@
 #include <iostream>
 
-#include "lib/pde_lib/Builder.cpp"
+#include "lib/headers/Builder.h"
+#include "lib/headers/FemPDE.h"
+#include "lib/headers/SolverParams.h"
+#include "lib/headers/VectorOperations.h"
+
 
 double u_ex(double * point)
 {
@@ -20,11 +24,10 @@ double k_fun(double* point)
 int main(int argc, char const *argv[])
 {
 	// Builder mathes to left boundary 1 to right boundary 2
-	FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, 100); // Для ГУ на границе стоит элемент порядка ниже
+	FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, 10); // Для ГУ на границе стоит элемент порядка ниже
 	// femgtidlinear->assign_boundary_type(selector , type)
 
-	SolversParams* params = new SolversParams;
-	params->set_params(SolversParams::Methods::Thomas, SolversParams::Preconditioners::None, 1000, 1.e-5, 10);
+	SolversParams* params = new SolversParams(SolversParams::Methods::Thomas, SolversParams::Preconditioners::None, 1000, 1.e-5, 10);
 
 	FemPDE fempde(&femgridlinear, f_fun, k_fun, params); 
 	// fempde->set_bc() 
@@ -39,7 +42,7 @@ int main(int argc, char const *argv[])
 	std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);
 	
 	// Obtain difference between vectors of numerical solution and analytical function approximation
-	std::vector<double> difference = VDiff(sol, u_ex_num);
+	std::vector<double> difference = vector_diff(sol, u_ex_num);
 
 	// Calculate the maximum deviation 
 	double normmax = max_abs(difference);

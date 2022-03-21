@@ -1,10 +1,11 @@
-#ifndef __FINITE_ELEMENTS_MESH_BUILDER_CPP__
-#define __FINITE_ELEMENTS_MESH_BUILDER_CPP__
+// #ifndef __FINITE_ELEMENTS_MESH_BUILDER_CPP__
+// #define __FINITE_ELEMENTS_MESH_BUILDER_CPP__
 
 #include "../headers/Builder.h"
-#include "BoundaryElements.cpp"
-#include "FemGrid.cpp"
-#include "LinElem.cpp"
+#include "../headers/IFiniteElem.h"
+#include "../headers/IBoundaryElem.h"
+#include "../headers/FemGrid.h"
+#include "../headers/LinElem.h"
 
 
 FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
@@ -47,4 +48,4 @@ FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
 	return grid;
 }
 
-#endif
+// #endif

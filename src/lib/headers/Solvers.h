@@ -20,7 +20,7 @@ public:
 
 	static IMatrixSolver* Factory(const SolversParams* parameters);
 	IMatrixSolver(const SolversParams* parameters);
-	virtual void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) = 0;
+	virtual void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) = 0;
 };
 /*-----------------------------Solvers Interface-----------------------------*/
 
@@ -31,7 +31,7 @@ class GD_Solver : public IMatrixSolver
 public:
 
 	GD_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Gradient decent solver-----------------------------*/
 
@@ -42,7 +42,7 @@ class MR_Solver : public IMatrixSolver
 public:
 
 	MR_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Minimal residuals solver-----------------------------*/
 
@@ -53,7 +53,7 @@ class CG_Solver : public IMatrixSolver
 public:
 
 	CG_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Conjugate gradients solver-----------------------------*/
 
@@ -64,7 +64,7 @@ class SSOR_Solver : public IMatrixSolver
 public:
 
 	SSOR_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Symmetric Successive over relaxation solver-----------------------------*/
 
@@ -75,7 +75,7 @@ class SOR_Solver : public IMatrixSolver
 public:
 
 	SOR_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Successive over relaxation solver-----------------------------*/
 
@@ -86,7 +86,7 @@ class Seidel_Solver : public IMatrixSolver
 public:
 
 	Seidel_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Seidel-Gauss solver-----------------------------*/
 
@@ -97,7 +97,7 @@ class Jacobi_Solver : public IMatrixSolver
 public:
 
 	Jacobi_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Jacobi solver-----------------------------*/
 
@@ -107,12 +107,12 @@ class Thomas_Solver : public IMatrixSolver
 {
 protected:
 
-	bool CheckTridiagonal(CMatrix& Lhs);
+	bool CheckTridiagonal(const CMatrix& Lhs);
 
 public:
 
 	Thomas_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Thomas solver-----------------------------*/
 
@@ -122,12 +122,12 @@ class LU_Solver : public IMatrixSolver
 {
 protected:
 
-	void LU_decomposition(CMatrix &Lhs, CMatrix &L);
+	void LU_decomposition(const CMatrix &Lhs, CMatrix &L);
 
 public:
 
 	LU_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u) override;
+	void solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u) override;
 
 };
 /*-----------------------------Cholesky factorization solver-----------------------------*/
@@ -138,12 +138,12 @@ class LDU_Solver : public IMatrixSolver
 {
 protected:
 
-	void LDU_decomposition(CMatrix &Lhs, CMatrix &L, CMatrix &D);
+	void LDU_decomposition(const CMatrix &Lhs, CMatrix &L, CMatrix &D);
 
 public:
 
 	LDU_Solver(const SolversParams* parameters) : IMatrixSolver(parameters) { }
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------LDU factorization solver-----------------------------*/
 
@@ -159,7 +159,7 @@ protected:
 public:
 
 	GD_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner);
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Gradient decent solver (P)-----------------------------*/
 
@@ -172,7 +172,7 @@ protected:
 public:
 
 	CG_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner);
-	void solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
+	void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) override;
 };
 /*-----------------------------Conjugate gradients solver (P)-----------------------------*/
 

@@ -1,12 +1,14 @@
-set(LIB_CPPS pde_lib/VectorOperations.cpp
-	pde_lib/Builder.cpp
+set(LIB_CPPS pde_lib/Builder.cpp
 	pde_lib/CompressedM.cpp
 	pde_lib/FemGrid.cpp
 	pde_lib/FemPDE.cpp
-	pde_lib/BoundaryElements.cpp
+	pde_lib/IFiniteElem.cpp
 	pde_lib/LinElem.cpp
+	pde_lib/PointBoundElem.cpp
+	pde_lib/SolverParams.cpp
 	pde_lib/Preconditioners.cpp
 	pde_lib/Solvers.cpp
+	pde_lib/VectorOperations.cpp
 )
 
 set(HEADERS headers/Builder.h
@@ -15,11 +17,15 @@ set(HEADERS headers/Builder.h
 	headers/FemPDE.h
 	headers/IBoundaryElem.h
 	headers/IFiniteElem.h
+	headers/LinElem.h
+	headers/PointBoundElem.h
 	headers/Preconditioners.h
 	headers/Solvers.h
+	headers/SolverParams.h
+	headers/VectorOperations.h
 )
 
-add_library(FEM_PDE_lib STATIC ${LIB_CPPS} ${HEADERS})
+add_library(${FEM_PDE_lib} STATIC ${LIB_CPPS} ${HEADERS})
 # target_include_directories(${FEMLIB} PRIVATE "${PROJECT_SOURCE_DIR}/lib/pde_lib"
-# 	"${PROJECT_SOURCE_DIR}/lib/headers")
-
+# 	"${PROJECT_SOURCE_DIR}/lib/headers") 
+ 

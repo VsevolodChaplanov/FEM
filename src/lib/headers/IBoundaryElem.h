@@ -20,68 +20,23 @@ public:
 	};
 
 	// Returns mass matrix element with local indices [i,j]
-	virtual double get_mass(size_t i, size_t j) = 0; 
+	virtual double get_mass(size_t i, size_t j) const = 0; 
 	// Returns stiffness matrix elements with local indices [i,j]
-	virtual double get_stiffness(size_t i, size_t j) = 0;
+	virtual double get_stiffness(size_t i, size_t j) const = 0;
 	// Returns [i,i] element of lumped mass matrix
-	virtual double get_lumped(size_t i) = 0;
+	virtual double get_lumped(size_t i) const = 0;
 	// Returns global indices according to boundary type
-	virtual std::vector<size_t> get_g_indices_for_belem_type(size_t boundary_type) = 0;
+	virtual std::vector<size_t> get_global_indices_of_boundtype(size_t boundary_type) const = 0;
+	// Returns dimension of element
+	virtual size_t get_dim() const = 0;
+	// Returns number of basis functions
+	virtual size_t get_number_basis_func() const = 0;
+	// Returns bound type
+	virtual size_t get_bound_type() const = 0;
+	// Returns coordinated of the vertex of the boundary element
+	virtual std::vector<double> get_vertex() const = 0;
 	// Returns point in parametric space according to physical point
-	virtual double* phys_to_param(double* point) = 0;
-
-public:
-
-	// Dimension of the boundary element
-	size_t dim;
-	// Number of basis functions
-	size_t n_basis;
-	// Bound type
-	size_t bound_type;
-	// Global indices of vertexes consisting of the boundary element
-	std::vector<size_t> global_indices;
-	// Mass matrix of boundary element
-	std::vector<double> mass_matrix {1};
-	// Stiffness matrix of boundary element;
-	std::vector<double> stiffness_matrix {0};
-	// lumped mass matrix of boundary element
-	std::vector<double> lumped_mass_matrix {1};
-};
-
-// a0 - type "1" boundary condition
-// an - type "2" boundary condition
-class PointBoundaryElement : public IBoundaryElement
-{
-public:
-
-	enum bound_vert_types { left = 1,
-	right = 2
-	};
-	// Vertex storage to function phys_to_param;
-	std::vector<double> vertex;
-
-	// Gets only 1 vertice
-	// vertex - {x0,y0,z0}
-	// g_index - {Gloval index of the vertex}
-	// boundary_type - type of boundary element
-	// for 1d case:
-	//	1 - left bound
-	//	2 - right bound
-	PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type);
-	// Returns mass matrix element with local indices [i,j]
-	double get_mass(size_t i, size_t j) override; 
-	// Returns stiffness matrix element with local indices [i,j]
-	double get_stiffness(size_t i, size_t j) override;
-	// Returns [i,i] element of lumped mass matrix
-	double get_lumped(size_t i) override;
-	// Returns global indices according to boundary type
-	std::vector<size_t> get_g_indices_for_belem_type(size_t boundary_type) override;
-	// Returns point in parametric space according to physical point
-	double* phys_to_param(double* point) override;
-
-private: 
-
-	double phi(double* point);
+	virtual double* phys_to_param(double* point) const = 0;
 };
 
 #endif

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(FEM VERSION 0.1.0)
 
 set(TEST_EXE fem)
+set(FEM_PDE_lib FEM_PDE)
 
 message(STATUS ${TEST_EXE})
 

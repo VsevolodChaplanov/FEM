@@ -1,11 +1,11 @@
-#ifndef __MATRIX_SOLVERS_CPP__
-#define __MATRIX_SOLVERS_CPP__
+// #ifndef __MATRIX_SOLVERS_CPP__
+// #define __MATRIX_SOLVERS_CPP__
 
 #include "../headers/Solvers.h"
-#include "VectorOperations.cpp"
-#include "CompressedM.cpp"
-#include "Preconditioners.cpp"
-#include "SolverParams.cpp"
+#include "../headers/VectorOperations.h"
+#include "../headers/CompressedM.h"
+#include "../headers/Preconditioners.h"
+#include "../headers/SolverParams.h"
 
 
 /*-----------------------------Realizations-----------------------------*/
@@ -65,7 +65,7 @@ IMatrixSolver::IMatrixSolver(const SolversParams* parameters)
 	this->parameters = parameters;
 }
 
-void CG_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void CG_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	double start_time = clock();
 	//size_t N = Lhs.size();
@@ -73,24 +73,24 @@ void CG_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 	std::vector<double> p;
 	std::vector<double> R;
 
-	r = VDiff((Lhs * u), Rhs);
+	r = vector_diff((Lhs * u), Rhs);
 	p = r;
-	double Norm = DotProduct(r,p);
+	double Norm = dot_product(r,p);
 	std::vector<double> Ap = Lhs * p;
-	double pAp = DotProduct(p, Ap);
+	double pAp = dot_product(p, Ap);
 	double lambda = Norm / pAp;
-	u = VDiff(u, Mult_N(p, lambda));
+	u = vector_diff(u, mult_n(p, lambda));
 
 	for (size_t k = 1; k < parameters->MAX_ITERATIONS; k++)
 	{
-		r = VDiff(r, Mult_N(Ap, lambda));
-		double NewNorm = DotProduct(r,r);
+		r = vector_diff(r, mult_n(Ap, lambda));
+		double NewNorm = dot_product(r,r);
 		double alpha = NewNorm / Norm;
-		p = VSum(r, Mult_N(p, alpha));
+		p = vector_sum(r, mult_n(p, alpha));
 		Ap = Lhs * p;
-		pAp = DotProduct(p, Ap);
+		pAp = dot_product(p, Ap);
 		lambda = NewNorm / pAp;
-		u = VDiff(u, Mult_N(p, lambda));
+		u = vector_diff(u, mult_n(p, lambda));
 		Norm = NewNorm;
 		if (k % parameters->Save_steps == 0)
 		{
@@ -101,13 +101,13 @@ void CG_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
 			std::cout << "Норма невязки: " << sqrt(Norm) << std::endl;
-			WriteInFile(R, "Residuals");	
+			write_in_file(R, "Residuals");	
 			break;
 		}
 	}
 }
 
-void GD_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void GD_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	double start_time = clock(); 				// Замер времени
 	std::vector<double> r;
@@ -115,11 +115,11 @@ void GD_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 
 	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{   
-		r = VDiff(Lhs * u, Rhs);
-		double Norm = DotProduct(r,r);
-		double gamma = Norm / (DotProduct(Lhs * r, r));
+		r = vector_diff(Lhs * u, Rhs);
+		double Norm = dot_product(r,r);
+		double gamma = Norm / (dot_product(Lhs * r, r));
 
-		u = VDiff(u, Mult_N(r, gamma));
+		u = vector_diff(u, mult_n(r, gamma));
 
 		if(k % parameters->Save_steps == 0) 
 		{
@@ -131,13 +131,13 @@ void GD_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
-			WriteInFile(R, "Residuals");
+			write_in_file(R, "Residuals");
 			break;
 		}
 	} // k
 }
 
-void MR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void MR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
     double start_time = clock();
     std::vector<double> r(Rhs.size());
@@ -146,13 +146,13 @@ void MR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
 
     for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
     {
-        r = VDiff(Lhs * u, Rhs);
+        r = vector_diff(Lhs * u, Rhs);
 
         std::vector<double> Ar = Lhs * r;
-        double gamma = DotProduct(r , Ar) / DotProduct(Ar , Ar);
-        u = VDiff(u, Mult_N(r, gamma));
+        double gamma = dot_product(r , Ar) / dot_product(Ar , Ar);
+        u = vector_diff(u, mult_n(r, gamma));
         
-        double Norm = sqrt(DotProduct(r,r));
+        double Norm = sqrt(dot_product(r,r));
 
         if(k % parameters->Save_steps == 0)
         {
@@ -163,13 +163,13 @@ void MR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<
         {
             std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
             std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
-			WriteInFile(R, "Residuals");	
+			write_in_file(R, "Residuals");	
             break;
         }
     }
 }
 
-void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void SSOR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	size_t N = Lhs.size();
 	std::vector<double> Temp_U(N, 0.);
@@ -220,7 +220,7 @@ void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vecto
 			u[i] = parameters->omega_solver / Lhs.GetValue(i,i) * ( - LowerSum - HigherSum + Rhs[i]) + (1 - parameters->omega_solver) * Temp_U[i];
 		} // End i - filling solution vector // i
 
-		double res = norm_2(VDiff(Lhs * u, Rhs));
+		double res = norm_2(vector_diff(Lhs * u, Rhs));
 
 		if (k % parameters->Save_steps == 0)
 		{
@@ -231,13 +231,13 @@ void SSOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vecto
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
-			WriteInFile(R, "Residuals");
+			write_in_file(R, "Residuals");
 			break;
 		}		
 	} // Iterations cycle // k
 }
 
-void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void SOR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	size_t N = Lhs.size();
 	std::vector<double> Temp_U(N, 0.);
@@ -267,7 +267,7 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 		} // End i - filling solution vector // i
 
 
-		double res = norm_2(VDiff(Lhs * u, Rhs));
+		double res = norm_2(vector_diff(Lhs * u, Rhs));
 
 		if (k % parameters->Save_steps == 0)
 		{
@@ -278,7 +278,7 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
-			WriteInFile(R, "Residuals");
+			write_in_file(R, "Residuals");
 			break;
 		}
 
@@ -286,7 +286,7 @@ void SOR_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector
 	} // Iterations cycle // k
 }
 
-void Thomas_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void Thomas_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	if (CheckTridiagonal(Lhs) == false)
 	{
@@ -313,7 +313,7 @@ void Thomas_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 	std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
 }
 
-bool Thomas_Solver::CheckTridiagonal(CMatrix& Lhs)
+bool Thomas_Solver::CheckTridiagonal(const CMatrix& Lhs)
 {
 	bool check_result = true;
 	for (size_t i = 0; i < Lhs.size(); i++)
@@ -323,7 +323,7 @@ bool Thomas_Solver::CheckTridiagonal(CMatrix& Lhs)
 	return check_result;
 }
 
-void Jacobi_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void Jacobi_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	double start_time = clock();
 	std::size_t N = Lhs.size();
@@ -346,7 +346,7 @@ void Jacobi_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 			u[i] = (-InnerSum + Rhs[i]) / Lhs.GetValue(i,i);
 		}
 
-		double res = norm_2(VDiff(Lhs * u, Rhs));
+		double res = norm_2(vector_diff(Lhs * u, Rhs));
 
 		if (k % parameters->Save_steps == 0)
 		{
@@ -358,13 +358,13 @@ void Jacobi_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
-			WriteInFile(R, "Residuals");
+			write_in_file(R, "Residuals");
 			break;
 		}
 	}
 }
 
-void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
+void Seidel_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	size_t N = Lhs.size();
 	std::vector <double> U(N, 0.);
@@ -393,7 +393,7 @@ void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 		}
 
 
-		double res = norm_2(VDiff(Lhs * u, Rhs));
+		double res = norm_2(vector_diff(Lhs * u, Rhs));
 
 		if (k % parameters->Save_steps == 0)
 		{
@@ -404,7 +404,7 @@ void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 		{
 			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
 			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
-			WriteInFile(R, "Residuals");
+			write_in_file(R, "Residuals");
 			break;
 		}
 		u = U;
@@ -412,7 +412,7 @@ void Seidel_Solver::solve(CMatrix& Lhs, const std::vector<double>& Rhs, std::vec
 	
 }
 
-void LU_Solver::LU_decomposition(CMatrix &Lhs, CMatrix &L)
+void LU_Solver::LU_decomposition(const CMatrix &Lhs, CMatrix &L)
 {
 	std::size_t N = Lhs.size();
 	double start_time = clock();
@@ -444,7 +444,7 @@ void LU_Solver::LU_decomposition(CMatrix &Lhs, CMatrix &L)
 	std::cout << "Процедура LU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
 }
 
-void LU_Solver::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
+void LU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
 {
 	double start_time = clock();
 	size_t N = Lhs.size();
@@ -481,7 +481,7 @@ void LU_Solver::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<
 	std::cout << "Время решения без учета процедуры LU разложения: " << (clock() - start_clock_Solution) / CLOCKS_PER_SEC << std::endl;
 }
 
-void LDU_Solver::LDU_decomposition(CMatrix &Lhs, CMatrix &L, CMatrix &D)
+void LDU_Solver::LDU_decomposition(const CMatrix &Lhs, CMatrix &L, CMatrix &D)
 {
 	double start_time = clock();
 	// Ход алгоритма для нахождения D(iagonal) и L(ower)
@@ -506,7 +506,7 @@ void LDU_Solver::LDU_decomposition(CMatrix &Lhs, CMatrix &L, CMatrix &D)
 	std::cout << "Процедура LDU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
 }
 
-void LDU_Solver::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
+void LDU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
 {
 	double start_time = clock();
 	size_t N = Lhs.size();
@@ -541,31 +541,31 @@ void LDU_Solver::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector
 	std::cout << "Процедура решения СЛАУ с импользование LDU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
 }
 
-void CG_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
+void CG_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
 {
 	double start_time = clock();
 	size_t N = Lhs.size();
 	std::vector<double> w;
-	std::vector<double> r = VDiff(Lhs * u, Rhs);
+	std::vector<double> r = vector_diff(Lhs * u, Rhs);
 	std::vector<double> p = r;
 	std::vector<double> Ap = Lhs * p;
-	double rw = DotProduct(r,r);
-	double lambda = (DotProduct(p,r)) / (DotProduct(p, Ap));
-	u = VDiff(u, Mult_N(p, lambda));
+	double rw = dot_product(r,r);
+	double lambda = (dot_product(p,r)) / (dot_product(p, Ap));
+	u = vector_diff(u, mult_n(p, lambda));
 
 	for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
 	{	
-		r = VDiff(r, Mult_N(Ap, lambda));
+		r = vector_diff(r, mult_n(Ap, lambda));
 		w = Preconditioner->Precondition(Lhs, r);
-		double RW = DotProduct(r, w);
-		double Norm2 = DotProduct(r, r);
+		double RW = dot_product(r, w);
+		double Norm2 = dot_product(r, r);
 		double alpha = RW * (1 / rw);
 		rw = RW;
-		p = VSum(w, Mult_N(p, alpha));
+		p = vector_sum(w, mult_n(p, alpha));
 		Ap = Lhs * p;
-		double pAp = DotProduct(p, Ap);
+		double pAp = dot_product(p, Ap);
 		lambda = rw / pAp;
-		u = VDiff(u, Mult_N(p, lambda));
+		u = vector_diff(u, mult_n(p, lambda));
 
         if(k % parameters->Save_steps == 0)
         {
@@ -577,13 +577,13 @@ void CG_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
         {
             std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
             std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
-			WriteInFile(R, "Residuals_P");
+			write_in_file(R, "Residuals_P");
             break;
         }
 	}
 }
 
-void GD_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
+void GD_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
 {
 	//! Видимо в методичке ошибка
 	double start_time = clock();
@@ -595,13 +595,13 @@ void GD_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
     for (size_t k = 0; k < parameters->MAX_ITERATIONS; k++)
     {   
         // r = Ay-B
-        r = VDiff(Lhs * u, Rhs);
+        r = vector_diff(Lhs * u, Rhs);
 		w = Preconditioner->Precondition(Lhs, r);
         // gamma = (r,r) / (Ar,r)
-		double Norm2 = DotProduct(r,r);
-        double gamma = DotProduct(r, w) / DotProduct(r, Lhs * w);
+		double Norm2 = dot_product(r,r);
+        double gamma = dot_product(r, w) / dot_product(r, Lhs * w);
 
-        u = VDiff(u, Mult_N(r, gamma));
+        u = vector_diff(u, mult_n(r, gamma));
 
         if(k % parameters->Save_steps == 0)
         {
@@ -613,7 +613,7 @@ void GD_Solver_P::solve(CMatrix &Lhs, const std::vector<double> &Rhs, std::vecto
         {
             std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
             std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
-			WriteInFile(R, "Residuals_P");
+			write_in_file(R, "Residuals_P");
             break;
         }
     }
@@ -731,4 +731,4 @@ GD_Solver_P::GD_Solver_P(const SolversParams* parameters, IPreconditioner* Preco
 // 	omega = omega;
 // }
 
-#endif
+// #endif

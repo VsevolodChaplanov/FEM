@@ -1,8 +1,7 @@
-#ifndef __COMPRESSEDFORMAT_CPP__
-#define __COMPRESSEDFORMAT_CPP__
+// #ifndef __COMPRESSEDFORMAT_CPP__
+// #define __COMPRESSEDFORMAT_CPP__
 
 #include "../headers/CompressedM.h"
-
 
 // ============= C++ ============= //
 // ========= Реализации ========== //
@@ -198,4 +197,4 @@ void CMatrix::SetZeroRow(size_t i)
 
 CMatrix::~CMatrix() { }
 
-#endif
+// #endif

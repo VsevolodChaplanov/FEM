@@ -1,23 +1,22 @@
-#ifndef __PARTIAL_DIFF_EQUATION_CPP__
-#define __PARTIAL_DIFF_EQUATION_CPP__
+// #ifndef __PARTIAL_DIFF_EQUATION_CPP__
+// #define __PARTIAL_DIFF_EQUATION_CPP__
 
 #include "../headers/FemPDE.h"
-#include "BoundaryElements.cpp"
-#include "Builder.cpp"
-#include "CompressedM.cpp"
-#include "FemGrid.cpp"
-#include "LinElem.cpp"
-#include "Preconditioners.cpp"
-#include "Solvers.cpp"
-#include "VectorOperations.cpp"
+#include "../headers/CompressedM.h"
+#include "../headers/FemGrid.h"
+#include "../headers/Preconditioners.h"
+#include "../headers/Solvers.h"
+#include "../headers/VectorOperations.h"
 
-FemPDE::FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(double*), double (*k_analytical)(double*), const SolversParams* parameters)
+FemPDE::FemPDE(FemGrid* finite_element_mesh, 
+	double (*f_analytical)(double*), 
+	double (*k_analytical)(double*), 
+	const SolversParams* parameters) : Nvert(finite_element_mesh->get_vertices_number()),
+		Nelem(finite_element_mesh->get_elements_number())
 {
 	this->f_func = f_analytical;
 	this->k_func = k_analytical;
 	this->fin_elem_mesh = finite_element_mesh;
-	this->Nvert = finite_element_mesh->get_vertices_number();
-	this->Nelem = finite_element_mesh->get_elements_number(); 
 	M_g.resize(Nvert);
 	S_g.resize(Nvert);
 	lhs_g.resize(Nvert);
@@ -43,23 +42,23 @@ void FemPDE::assemble()
 	// }
 	for (size_t k = 0; k < Nelem; k++)
 	{
-		IFiniteElement* ifiniteelement = fin_elem_mesh->elements[k];
-		for (size_t i = 0; i < ifiniteelement->n_basis; i++)
+		IFiniteElement* ifiniteelement = fin_elem_mesh->get_element(k);
+		for (size_t i = 0; i < ifiniteelement->get_number_basis_func(); i++)
 		{
-			for (size_t j = 0; j < ifiniteelement->n_basis; j++)
+			for (size_t j = 0; j < ifiniteelement->get_number_basis_func(); j++)
 			{
-				size_t GlobI = ifiniteelement->global_indices[i];
-				size_t GlobJ = ifiniteelement->global_indices[j];
+				size_t GlobI = ifiniteelement->get_global_indices()[i];
+				size_t GlobJ = ifiniteelement->get_global_indices()[j];
 				M_g.SetValue(GlobI, GlobJ, M_g.GetValue(GlobI, GlobJ) + ifiniteelement->get_mass(i,j));
 				S_g.SetValue(GlobI, GlobJ, S_g.GetValue(GlobI, GlobJ) + k_vec[k] * ifiniteelement->get_stiffness(i,j));
 			}
 		}
 	}
-	SummCM(M_g, S_g, lhs_g);
+	summ_cm(M_g, S_g, lhs_g);
 	rhs_g = M_g * make_f_vec_vert();
 }   
 
-std::vector<double> FemPDE::solve()
+std::vector<double> FemPDE::solve() const
 {
 	std::vector<double> solution(this->Nvert);
 
@@ -96,9 +95,9 @@ std::vector<double> FemPDE::make_k_vec_center()
 	std::vector<double> k_vec(Nelem);
 	for (size_t i = 0; i < Nelem; i++)
 	{
-		k_vec[i] = k_func(fin_elem_mesh->elements[i]->get_center_coordinates());
+		k_vec[i] = k_func(fin_elem_mesh->get_element(i)->get_center_coordinates());
 	}
 	return k_vec;
 }
 
-#endif
+// #endif
