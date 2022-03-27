@@ -1,9 +1,9 @@
 // #ifndef __FINITELEMENTSGRID_CPP__
 // #define __FINITELEMENTSGRID_CPP__
 
-#include "../headers/FemGrid.h"
-#include "../headers/IBoundaryElem.h"
-#include "../headers/LinElem.h"
+#include "FemGrid.h"
+#include "IBoundaryElem.h"
+#include "LinElem.h"
 
 FemGrid::FemGrid(size_t dim, const std::vector<double> &vertices, const std::vector<IFiniteElement*> &elements, const std::vector<IBoundaryElement*> &boundary_elements) : elements(elements),
 	vertices(vertices),

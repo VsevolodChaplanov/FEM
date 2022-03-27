@@ -1,7 +1,7 @@
 // #ifndef __BOUNDARY_ELEMS_CPP__
 // #define __BOUNDARY_ELEMS_CPP__
 
-#include "../headers/PointBoundElem.h"
+#include "PointBoundElem.h"
 
 PointBoundaryElement::PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type) :
 	vertex(vertex),

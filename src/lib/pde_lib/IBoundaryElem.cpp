@@ -1,5 +1,5 @@
-#include "../headers/IBoundaryElem.h"
-#include "../headers/PointBoundElem.h"
+#include "IBoundaryElem.h"
+#include "PointBoundElem.h"
 
 IBoundaryElement* IBoundaryElement::Factory(const std::vector<double> &vertices, const std::vector<size_t> &GIndices, size_t element_type, size_t bound_type)
 {

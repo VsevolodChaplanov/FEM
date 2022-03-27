@@ -1,7 +1,7 @@
 // #ifndef __SOLVERS_PARAMETERS_CPP__
 // #define __SOLVERS_PARAMETERS_CPP__
 
-#include "../headers/SolverParams.h"
+#include "SolverParams.h"
 
 
 // Constuctor with selected params for SOR, SSOR methods

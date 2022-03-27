@@ -2,8 +2,8 @@
 // #define __PRECONDITION_METHODS_CPP__
 
 
-#include "../headers/Preconditioners.h"
-#include "../headers/CompressedM.h"
+#include "Preconditioners.h"
+#include "CompressedM.h"
 
 
 

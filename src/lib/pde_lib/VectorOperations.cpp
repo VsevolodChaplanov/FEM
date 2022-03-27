@@ -1,7 +1,7 @@
 // #ifndef __VECTOROPERATIONS_CPP__
 // #define __VECTOROPERATIONS_CPP__
 
-#include "../headers/VectorOperations.h"
+#include "VectorOperations.h"
 
 // Процедуры основных векторных и матричных операций
 

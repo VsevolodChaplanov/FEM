@@ -1,9 +1,9 @@
 // #ifndef __LINEAR_FINITE_ELEMS_CPP__
 // #define __LINEAR_FINITE_ELEMS_CPP__
 
-#include "../headers/IFiniteElem.h"
-#include "../headers/LinElem.h"
-#include "../headers/IFiniteElem.h"
+#include "IFiniteElem.h"
+#include "LinElem.h"
+#include "IFiniteElem.h"
 
 LinElem::LinElem(const std::vector<double> &verteces, const std::vector<std::size_t> &GIdences) :
 	length(verteces[1] - verteces[0]),

@@ -1,12 +1,12 @@
 // #ifndef __PARTIAL_DIFF_EQUATION_CPP__
 // #define __PARTIAL_DIFF_EQUATION_CPP__
 
-#include "../headers/FemPDE.h"
-#include "../headers/CompressedM.h"
-#include "../headers/FemGrid.h"
-#include "../headers/Preconditioners.h"
-#include "../headers/Solvers.h"
-#include "../headers/VectorOperations.h"
+#include "FemPDE.h"
+#include "CompressedM.h"
+#include "FemGrid.h"
+#include "Preconditioners.h"
+#include "Solvers.h"
+#include "VectorOperations.h"
 
 FemPDE::FemPDE(FemGrid* finite_element_mesh, 
 	double (*f_analytical)(const double*), 

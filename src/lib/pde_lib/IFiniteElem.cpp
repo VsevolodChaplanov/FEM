@@ -1,8 +1,8 @@
 // #ifndef __INTERFACE_FINITE_ELEMS_CPP__
 // #define __INTERFACE_FINITE_ELEMS_CPP__
 
-#include "../headers/IFiniteElem.h"
-#include "../headers/LinElem.h"
+#include "IFiniteElem.h"
+#include "LinElem.h"
 
 IFiniteElement* IFiniteElement::Factory(const std::vector<double> &verices, const std::vector<size_t> &GIndices, size_t element_type)
 {

@@ -1,11 +1,11 @@
 // #ifndef __MATRIX_SOLVERS_CPP__
 // #define __MATRIX_SOLVERS_CPP__
 
-#include "../headers/Solvers.h"
-#include "../headers/VectorOperations.h"
-#include "../headers/CompressedM.h"
-#include "../headers/Preconditioners.h"
-#include "../headers/SolverParams.h"
+#include "Solvers.h"
+#include "VectorOperations.h"
+#include "CompressedM.h"
+#include "Preconditioners.h"
+#include "SolverParams.h"
 
 
 /*-----------------------------Realizations-----------------------------*/
