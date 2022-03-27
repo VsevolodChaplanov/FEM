@@ -39,15 +39,13 @@ public:
 	// Return vector of indices of boundary elements of the specified type
 	std::vector<size_t> boundary_element_indices(size_t boundary_element_type) const;
 	// Approximate analytical function along mesh
-	std::vector<double> approximate(double (*analytical_func)(const double *)) const;
-	// Returns coordinates of center of finite element with index i
-	double* get_coord_of_center_of_finelem(size_t i) const;
+	std::vector<double> approximate(std::function<double(const double*)>) const;
 	// Returns number of finite elements in f.el.mesh
 	size_t get_elements_number() const;
 	// Returns number of vertices in f.el.mesh
 	size_t get_vertices_number() const;
 	// Returns massive of coordinates of the vertex with global index i
-	double* get_vertex(size_t i) const;
+	const double* get_vertex(size_t i) const;
 
 	// // Так и не смог понять почему есть ошибка в таком случае *тип возвращаемого значения не соответствует типу функции*
 	// // Returns pointer to container of finite elements
@@ -56,9 +54,9 @@ public:
 	// std::vector<IBoundaryElement*>* get_boundary_elements() const;
 
 	// Return pointer to finite element with index i
-	IFiniteElement* get_element(size_t i) const;
+	const IFiniteElement* get_element(size_t i) const;
 	// Return pointer to boundary element with index i
-	IBoundaryElement* get_boundary_element(size_t i) const;
+	const IBoundaryElement* get_boundary_element(size_t i) const;
 	// Calculates second norm of **difference** within approximation
 	double norm2(const std::vector<double> &difference) const;
 	// Save data as file of .vtk format
@@ -72,5 +70,6 @@ private:
 };
 
 
-
+// // Returns coordinates of center of finite element with index i
+// const double* get_coord_of_center_of_finelem(size_t i) const;
 #endif

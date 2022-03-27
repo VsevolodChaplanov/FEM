@@ -86,8 +86,7 @@ std::vector<double> CMatrix::operator*(const std::vector<double> &Vector) const
 {
 	if (Vector.size() == ! N)
 	{
-		throw "Длины вектора и матрицы не совпадают";
-		std::cout << "Длины вектора и матрицы не совпадают" << std::endl;
+		throw std::runtime_error("Dimensions of vector and matrix doesn't match");
 	}
 	
 	// Вектор в который записывается результат

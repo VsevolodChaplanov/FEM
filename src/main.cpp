@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 	FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, 10); // Для ГУ на границе стоит элемент порядка ниже
 	// femgtidlinear->assign_boundary_type(selector , type)
 
-	SolversParams* params = new SolversParams(SolversParams::Methods::Thomas, SolversParams::Preconditioners::None, 1000, 1.e-5, 10);
+	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::Thomas, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10);
 
 	FemPDE fempde(&femgridlinear, f_fun, k_fun, params); 
 	// fempde->set_bc() 

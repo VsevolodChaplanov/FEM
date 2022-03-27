@@ -11,47 +11,47 @@
 /*-----------------------------Realizations-----------------------------*/
 
 // Hardcode
-IMatrixSolver* IMatrixSolver::Factory(const SolversParams* parameters)
+IMatrixSolver* IMatrixSolver::Factory(const MatrixSolverParams* parameters)
 {
-	if (parameters->solve_method == SolversParams::Thomas && parameters->precondition_method == SolversParams::Preconditioners::None)
+	if (parameters->solve_method == MatrixSolverParams::Thomas && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{	
 		return new Thomas_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::Jacobi && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::Jacobi && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new Jacobi_Solver(parameters));
 		return new Jacobi_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::Seidel && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::Seidel && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new Seidel_Solver(parameters));
 		return new Seidel_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::SOR && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::SOR && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new SOR_Solver(parameters));
 		return new SOR_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::SSOR && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::SSOR && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new SSOR_Solver(parameters));
 		return new SSOR_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::MR && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::MR && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new MR_Solver(parameters));
 		return new MR_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::GD && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::GD && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new GD_Solver(parameters));
 		return new GD_Solver(parameters);
-	} else if (parameters->solve_method == SolversParams::Methods::CG && parameters->precondition_method == SolversParams::Preconditioners::None)
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::CG && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new CG_Solver(parameters));
 		return new CG_Solver(parameters);
-	} else if (parameters->precondition_method != SolversParams::Preconditioners::None)
+	} else if (parameters->precondition_method != MatrixSolverParams::Preconditioners::None)
 	{
 		//std::shared_ptr<IPreconditioner> preconditioner = IPreconditioner::Factory(parameters);
-		if (parameters->solve_method == SolversParams::Methods::GD)
+		if (parameters->solve_method == MatrixSolverParams::Methods::GD)
 		{
 			//std::shared_ptr<IMatrixSolver> solver(new GD_Solver_P(parameters, preconditioner));
 			return new GD_Solver_P(parameters, IPreconditioner::Factory(parameters));
-		} else if (parameters->solve_method == SolversParams::Methods::CG) 
+		} else if (parameters->solve_method == MatrixSolverParams::Methods::CG) 
 		{
 			//std::shared_ptr<IMatrixSolver> solver(new CG_Solver_P(parameters, preconditioner));
 			return new GD_Solver_P(parameters, IPreconditioner::Factory(parameters));
@@ -60,7 +60,7 @@ IMatrixSolver* IMatrixSolver::Factory(const SolversParams* parameters)
 	return nullptr;
 }
 
-IMatrixSolver::IMatrixSolver(const SolversParams* parameters)
+IMatrixSolver::IMatrixSolver(const MatrixSolverParams* parameters)
 {
 	this->parameters = parameters;
 }
@@ -619,12 +619,12 @@ void GD_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std:
     }
 }
 
-CG_Solver_P::CG_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner) : IMatrixSolver(parameters)
+CG_Solver_P::CG_Solver_P(const MatrixSolverParams* parameters, IPreconditioner* Preconditioner) : IMatrixSolver(parameters)
 {
 	this->Preconditioner = Preconditioner;
 }
 
-GD_Solver_P::GD_Solver_P(const SolversParams* parameters, IPreconditioner* Preconditioner) : IMatrixSolver(parameters)
+GD_Solver_P::GD_Solver_P(const MatrixSolverParams* parameters, IPreconditioner* Preconditioner) : IMatrixSolver(parameters)
 {
 	this->Preconditioner = Preconditioner;
 }
@@ -716,8 +716,8 @@ GD_Solver_P::GD_Solver_P(const SolversParams* parameters, IPreconditioner* Preco
 // 	return new GD_Solver_P(Preconditioner);
 // }
 
-// void SolversParams_SOR_SSOR::set_params( SolversParams::Methods method = Thomas,
-// 	SolversParams::Preconditioners precondition_method = None,
+// void SolversParams_SOR_SSOR::set_params( MatrixSolverParams::Methods method = Thomas,
+// 	MatrixSolverParams::Preconditioners precondition_method = None,
 // 	size_t MAX_ITERATIONS = 10000000,
 // 	double eps = 1.e-5,
 // 	size_t Save_steps = 10,

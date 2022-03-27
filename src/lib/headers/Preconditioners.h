@@ -10,20 +10,20 @@ class IPreconditioner
 {
 protected:
 
-	const SolversParams* params;
+	const MatrixSolverParams* params;
 
 public:
 
-	IPreconditioner(const SolversParams* parameters);
+	IPreconditioner(const MatrixSolverParams* parameters);
 	virtual std::vector<double> Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs) = 0;
-	static IPreconditioner* Factory(const SolversParams* params);
+	static IPreconditioner* Factory(const MatrixSolverParams* params);
 };
 
 class Jacobi_P : public IPreconditioner
 {
 public:
 
-	Jacobi_P(const SolversParams* parameters);
+	Jacobi_P(const MatrixSolverParams* parameters);
 	std::vector<double> Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 
@@ -31,7 +31,7 @@ class SSOR_P : public IPreconditioner
 {
 public:
 
-	SSOR_P(const SolversParams* parameters);
+	SSOR_P(const MatrixSolverParams* parameters);
 	std::vector<double> Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 
@@ -39,7 +39,7 @@ class ISO0_1_P : public IPreconditioner
 {
 public:
 
-	ISO0_1_P(const SolversParams* parameters);
+	ISO0_1_P(const MatrixSolverParams* parameters);
 	std::vector<double> Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 
@@ -47,7 +47,7 @@ class ISO0_2_P : public IPreconditioner
 {
 public:
 
-	ISO0_2_P(const SolversParams* parameters);
+	ISO0_2_P(const MatrixSolverParams* parameters);
 	std::vector<double> Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs) override;
 };
 

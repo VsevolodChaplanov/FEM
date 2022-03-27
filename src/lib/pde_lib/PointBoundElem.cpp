@@ -3,22 +3,11 @@
 
 #include "../headers/PointBoundElem.h"
 
-PointBoundaryElement::PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type) : dim(0),
+PointBoundaryElement::PointBoundaryElement(const std::vector<double> &vertex, const std::vector<size_t> &g_index, size_t boundary_type) :
 	vertex(vertex),
-	n_basis(1),
-	bound_type(boundary_type)
-{
-	this->global_indices = g_index;
-}
-
-std::vector<size_t> PointBoundaryElement::get_global_indices_of_boundtype(size_t boundary_type) const
-{
-	if (this->bound_type == boundary_type)
-	{
-		return this->global_indices;
-	}
-	return {};	
-}
+	bound_type(boundary_type),
+	global_indices(g_index)
+{ }
 
 double PointBoundaryElement::get_mass(size_t i, size_t j) const
 {
@@ -35,20 +24,34 @@ double PointBoundaryElement::get_lumped(size_t i) const
 	return lumped_mass_matrix[0];
 }
 
-double* PointBoundaryElement::phys_to_param(double* point) const
+const std::vector<size_t>& PointBoundaryElement::get_global_indices() const
 {
-	// Or 0?
-	return point;
+	return global_indices;
 }
 
-size_t PointBoundaryElement::get_dim() const
+void PointBoundaryElement::phys_to_param(const double* phys_in, double* param_out) const
 {
-	return dim;
+	throw std::runtime_error("Can not calculate phys_to_param for boundary element");
+}
+
+void PointBoundaryElement::param_to_phys(const double* param_in, double* phys_out) const
+{
+	throw std::runtime_error("Can not calculate param_to_phys for boundary element");
+}
+
+const double* PointBoundaryElement::get_center_coordinates() const
+{
+	return &vertex[0];
+}
+
+double PointBoundaryElement::get_volume() const
+{
+	return 0;
 }
 
 size_t PointBoundaryElement::get_number_basis_func() const
 {
-	return n_basis;
+	return 1;
 }
 
 size_t PointBoundaryElement::get_bound_type() const
@@ -56,22 +59,21 @@ size_t PointBoundaryElement::get_bound_type() const
 	return bound_type;
 }
 
-std::vector<double> PointBoundaryElement::get_vertex() const
+size_t PointBoundaryElement::get_element_type() const
 {
-	return vertex;
+	return 0;
 }
 
-double PointBoundaryElement::phi(double* point) const
+double PointBoundaryElement::phi(const double* point) const
 {
-	for (size_t i = 0; i < sizeof(point) / sizeof(double); i++)
+	if (point[0] != vertex[0])
 	{
-		if (point[i] != vertex[i])
-		{
-			return 0;
-		}
+		return 0;
 	}
 	return 1;
 }
+
+PointBoundaryElement::~PointBoundaryElement() { }
 
 
 // #endif

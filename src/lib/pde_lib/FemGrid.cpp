@@ -16,18 +16,21 @@ FemGrid::FemGrid(size_t dim, const std::vector<double> &vertices, const std::vec
 std::vector<size_t> FemGrid::boundary_element_indices(size_t boundary_element_type) const
 {
 	std::vector<size_t> global_indices;
-	for (IBoundaryElement* elem : boundary_elements)
+	for (const IBoundaryElement* elem : boundary_elements)
 	{
-		std::vector<size_t> temp = elem->get_global_indices_of_boundtype(boundary_element_type);
-		for (auto index : temp)
+		if (elem->get_bound_type() == boundary_element_type)
 		{
-			global_indices.push_back(index);
+			std::vector<size_t> temp = elem->get_global_indices();
+			for (auto index : temp)
+			{
+				global_indices.push_back(index);
+			}
 		}
 	}
 	return global_indices;
 }
 
-std::vector<double> FemGrid::approximate(double (*analytical_func)(const double*)) const
+std::vector<double> FemGrid::approximate(std::function<double(const double*)> analytical_func) const
 {
 	std::vector<double> appr_an_func;
 	for (size_t i = 0; i < vertices_number; i++)
@@ -57,19 +60,9 @@ double FemGrid::norm2(const std::vector<double> &difference) const
 	return sqrt(sum);
 }
 
-double* FemGrid::get_coord_of_center_of_finelem(size_t i) const
+const double* FemGrid::get_vertex(size_t i) const
 {
-	return elements[i]->get_center_coordinates();
-}
-
-double* FemGrid::get_vertex(size_t i) const
-{
-	double* vertex = new double[dim];
-	for (size_t j = 0; j < dim; j++)
-	{
-		vertex[j] = vertices[i * dim + j];
-	}
-	return vertex;
+	return &vertices[i * dim];
 }
 
 void FemGrid::savevtk(const std::vector<double> &solution, const std::string &filename) const
@@ -137,6 +130,8 @@ void FemGrid::savevtk(const std::vector<double> &solution, const std::string &fi
 		File << elem << std::endl;
 	}
 
+	File.close();
+
 	std::cout << "Data has been stored in " << filename << std::endl;
 }
 
@@ -171,12 +166,12 @@ size_t FemGrid::get_vertices_number() const
 // 	return &boundary_elements;
 // }
 
-IFiniteElement* FemGrid::get_element(size_t i) const
+const IFiniteElement* FemGrid::get_element(size_t i) const
 {
 	return elements[i];
 }
 
-IBoundaryElement* FemGrid::get_boundary_element(size_t i) const
+const IBoundaryElement* FemGrid::get_boundary_element(size_t i) const
 {
 	return boundary_elements[i];
 }

@@ -11,7 +11,7 @@
 FemPDE::FemPDE(FemGrid* finite_element_mesh, 
 	double (*f_analytical)(const double*), 
 	double (*k_analytical)(const double*), 
-	const SolversParams* parameters) : Nvert(finite_element_mesh->get_vertices_number()),
+	const MatrixSolverParams* parameters) : Nvert(finite_element_mesh->get_vertices_number()),
 		Nelem(finite_element_mesh->get_elements_number())
 {
 	this->f_func = f_analytical;
@@ -24,14 +24,14 @@ void FemPDE::assemble()
 {
 	std::vector<double> k_vec = make_k_vec_center();
 
-	M_g.resize(Nvert);
+	M_g.resize(Nvert); // Тут скорее всего (порядок аппроксимации) * (число элементов) + 1
 	S_g.resize(Nvert);
 	lhs_g.resize(Nvert);
 	rhs_g.resize(Nvert);
 
 	for (size_t k = 0; k < Nelem; k++)
 	{
-		IFiniteElement* ifiniteelement = fin_elem_mesh->get_element(k);
+		const IFiniteElement* ifiniteelement = fin_elem_mesh->get_element(k);
 		for (size_t i = 0; i < ifiniteelement->get_number_basis_func(); i++)
 		{
 			for (size_t j = 0; j < ifiniteelement->get_number_basis_func(); j++)
@@ -44,7 +44,7 @@ void FemPDE::assemble()
 		}
 	}
 	summ_cm(M_g, S_g, lhs_g);
-	rhs_g = M_g * make_f_vec_vert();
+	rhs_g = M_g * fin_elem_mesh->approximate(f_func);
 }   
 
 std::vector<double> FemPDE::solve() const

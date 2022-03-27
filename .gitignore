@@ -1,3 +1,5 @@
 build
 .vscode
 src/main
+src/lib/headers/TriangleElem.h
+src/lib/pde_lib/TriangleElem.cpp

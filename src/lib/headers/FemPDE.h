@@ -19,11 +19,11 @@ private:
 	// 
 	FemGrid* fin_elem_mesh;
 
-	std::function<double(double*)> f_func;
-	std::function<double(double*)> k_func;
-	std::function<double(double*)> u_exact;
+	std::function<double(const double*)> f_func;
+	std::function<double(const double*)> k_func;
+	std::function<double(const double*)> u_exact;
 
-	const SolversParams* parameters;
+	const MatrixSolverParams* parameters;
 
 	const size_t Nelem;
 	const size_t Nvert;
@@ -41,7 +41,7 @@ private:
 	
 public:
 
-	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(const double*), double (*k_analytical)(const double*), const SolversParams* parameters);
+	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(const double*), double (*k_analytical)(const double*), const MatrixSolverParams* parameters);
 	void assemble();
 	std::vector<double> solve() const;
 	void apply_boundary_condition_dirichlet(double (*u_analytical)(const double*), const std::vector<size_t> &boundary_element_indices);

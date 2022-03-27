@@ -5,13 +5,12 @@
 #include "../headers/LinElem.h"
 #include "../headers/IFiniteElem.h"
 
-LinElem::LinElem(const std::vector<double> &verteces, const std::vector<std::size_t> &GIdences) : dim(1),
-	n_basis(2),
-	element_type(LinElem::VTK_LINE),
+LinElem::LinElem(const std::vector<double> &verteces, const std::vector<std::size_t> &GIdences) :
 	length(verteces[1] - verteces[0]),
-	start_point(verteces[0]),
 	det_j(verteces[1] - verteces[0]),
-	Volume(length),
+	start_point(verteces[0]),
+	volume(length),
+	center((verteces[1] + verteces[0]) / 2),
 	global_indices(GIdences)
 {
 	this->mass_matrix = {length / 3, length / 6, length / 6, length / 3};
@@ -20,24 +19,24 @@ LinElem::LinElem(const std::vector<double> &verteces, const std::vector<std::siz
 }
 
 
-double LinElem::phi1(double* _param_point) const
+double LinElem::phi1(const double* _param_point) const
 {
 	return 1 - _param_point[0];
 }
 
-double LinElem::phi2(double* _param_point) const
+double LinElem::phi2(const double* _param_point) const
 {
 	return _param_point[0];
 }
 
 double LinElem::get_mass(size_t i, size_t j) const
 {
-	return mass_matrix[i * n_basis + j];
+	return mass_matrix[i * 2 + j];
 }
 
 double LinElem::get_stiffness(size_t i, size_t j) const
 {
-	return stiffness_matrix[i * n_basis + j];
+	return stiffness_matrix[i * 2 + j];
 }
 
 double LinElem::get_lumped(size_t i) const
@@ -45,48 +44,41 @@ double LinElem::get_lumped(size_t i) const
 	return lumped_mass_matrix[i];
 }
 
-double* LinElem::phys_to_param(double* point) const
+void LinElem::phys_to_param(const double* phys_in, double* param_out) const
 {
-	size_t N = sizeof(point) / sizeof(double);
-	double* p_point = new double[N];
-	p_point[0] = (point[0] - start_point) / length;
-	return p_point;
+	param_out[0] = (phys_in[0] - start_point) / length;
 }
 
-double* LinElem::param_to_phys(double* p_point) const
+void LinElem::param_to_phys(const double* param_in, double* phys_out) const
 {
-	double* point = new double[1];
-	point[0] = start_point + p_point[0] * length;
-	return point;
+	phys_out[0] = param_in[0] * length + start_point;
 }
 
-double* LinElem::get_center_coordinates() const
+const double* LinElem::get_center_coordinates() const
 {
-	double* center = new double[1];
-	double* param_center = new double{0.5};
-	center = param_to_phys(param_center);
-	delete[] param_center;
-	return center;
+	return &center;
 }
 
 double LinElem::get_volume() const
 {
-	return Volume;
+	return volume;
 }
 
 size_t LinElem::get_number_basis_func() const
 {
-	return n_basis;
+	return 2;
 }
 
-std::vector<size_t> LinElem::get_global_indices() const
+const std::vector<size_t>& LinElem::get_global_indices() const
 {
 	return global_indices;
 }
 
 size_t LinElem::get_element_type() const
 {
-	return element_type;
+	return 1;
 }
+
+LinElem::~LinElem() { }
 
 // #endif

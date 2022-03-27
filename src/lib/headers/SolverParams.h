@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-struct SolversParams
+struct MatrixSolverParams
 {
 public: 	// Params
 
@@ -31,8 +31,8 @@ public: 	// Params
 
 public:
 
-	SolversParams::Methods solve_method = SolversParams::Methods::Thomas;
-	SolversParams::Preconditioners precondition_method = SolversParams::Preconditioners::None; 
+	MatrixSolverParams::Methods solve_method = MatrixSolverParams::Methods::Thomas;
+	MatrixSolverParams::Preconditioners precondition_method = MatrixSolverParams::Preconditioners::None; 
 	size_t MAX_ITERATIONS = 10000;
 	double eps = 1.e-5;
 	size_t Save_steps = 10;
@@ -49,8 +49,8 @@ public: 	// Methods
 	// 	Save_steps = 10;
 	// 	omega_solve = 1.95
 	//	omega_preconditioner = 1.95
-	SolversParams(SolversParams::Methods method = SolversParams::Methods::Thomas,
-		SolversParams::Preconditioners precondition_method = SolversParams::Preconditioners::None,
+	MatrixSolverParams(MatrixSolverParams::Methods method = MatrixSolverParams::Methods::Thomas,
+		MatrixSolverParams::Preconditioners precondition_method = MatrixSolverParams::Preconditioners::None,
 		size_t max_iterations = 10000,
 		double eps = 1.e-5,
 		size_t save_steps = 10,
@@ -59,8 +59,8 @@ public: 	// Methods
 	);
 
 	// Set params for SLE solver
-	void set_params(SolversParams::Methods method = SolversParams::Methods::Thomas,
-		SolversParams::Preconditioners precondition_method = SolversParams::Preconditioners::None,
+	void set_params(MatrixSolverParams::Methods method = MatrixSolverParams::Methods::Thomas,
+		MatrixSolverParams::Preconditioners precondition_method = MatrixSolverParams::Preconditioners::None,
 		size_t max_iterations = 10000,
 		double eps = 1.e-5,
 		size_t save_steps = 10,

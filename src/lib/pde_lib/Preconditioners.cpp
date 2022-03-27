@@ -8,21 +8,21 @@
 
 
 // Hadrcode
-IPreconditioner* IPreconditioner::Factory(const SolversParams* parameters)
+IPreconditioner* IPreconditioner::Factory(const MatrixSolverParams* parameters)
 {
-	if (parameters->precondition_method == SolversParams::Preconditioners::Jacobi_P)
+	if (parameters->precondition_method == MatrixSolverParams::Preconditioners::Jacobi_P)
 	{
 		//std::shared_ptr<IPreconditioner> preconditioner(new Jacobi_P(parameters));
 		return new Jacobi_P(parameters);
-	} else if (parameters->precondition_method == SolversParams::Preconditioners::SSOR_P)
+	} else if (parameters->precondition_method == MatrixSolverParams::Preconditioners::SSOR_P)
 	{
 		//std::shared_ptr<IPreconditioner> preconditioner(new SSOR_P(parameters));
 		return new SSOR_P(parameters);
-	} else if (parameters->precondition_method == SolversParams::Preconditioners::ILU01_P)
+	} else if (parameters->precondition_method == MatrixSolverParams::Preconditioners::ILU01_P)
 	{
 		//std::shared_ptr<IPreconditioner> preconditioner(new ISO0_1_P(parameters));
 		return new ISO0_1_P(parameters);
-	} else if (parameters->precondition_method == SolversParams::Preconditioners::ILU02_P)
+	} else if (parameters->precondition_method == MatrixSolverParams::Preconditioners::ILU02_P)
 	{
 		//std::shared_ptr<IPreconditioner> preconditioner(new ISO0_2_P(parameters));
 		return new ISO0_2_P(parameters);
@@ -30,18 +30,18 @@ IPreconditioner* IPreconditioner::Factory(const SolversParams* parameters)
 	return nullptr;
 }
 
-IPreconditioner::IPreconditioner(const SolversParams* parameters)
+IPreconditioner::IPreconditioner(const MatrixSolverParams* parameters)
 {
 	params = parameters;
 }
 
-Jacobi_P::Jacobi_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+Jacobi_P::Jacobi_P(const MatrixSolverParams* parameters) : IPreconditioner(parameters) { }
 
-SSOR_P::SSOR_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+SSOR_P::SSOR_P(const MatrixSolverParams* parameters) : IPreconditioner(parameters) { }
 
-ISO0_1_P::ISO0_1_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+ISO0_1_P::ISO0_1_P(const MatrixSolverParams* parameters) : IPreconditioner(parameters) { }
 
-ISO0_2_P::ISO0_2_P(const SolversParams* parameters) : IPreconditioner(parameters) { }
+ISO0_2_P::ISO0_2_P(const MatrixSolverParams* parameters) : IPreconditioner(parameters) { }
 
 std::vector<double> Jacobi_P::Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs)
 {

@@ -5,7 +5,6 @@
 #include <map>
 #include <string>
 #include <random>
-#include <iostream>
 
 // Класс для харнения разряженных матриц в виде:
 // { {{Coloumn, Value}, {Coloumn, Value}, ...}, 

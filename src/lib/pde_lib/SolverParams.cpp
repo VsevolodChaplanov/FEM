@@ -5,8 +5,8 @@
 
 
 // Constuctor with selected params for SOR, SSOR methods
-SolversParams::SolversParams(SolversParams::Methods method,
-	SolversParams::Preconditioners precondition_method,
+MatrixSolverParams::MatrixSolverParams(MatrixSolverParams::Methods method,
+	MatrixSolverParams::Preconditioners precondition_method,
 	size_t max_iterations,
 	double eps,
 	size_t save_steps,
@@ -22,8 +22,8 @@ SolversParams::SolversParams(SolversParams::Methods method,
 	omega_preconditioner = omega_precondition;
 }
 
-void SolversParams::set_params( SolversParams::Methods method,
-	SolversParams::Preconditioners precondition_method,
+void MatrixSolverParams::set_params( MatrixSolverParams::Methods method,
+	MatrixSolverParams::Preconditioners precondition_method,
 	size_t MAX_ITERATIONS,
 	double eps,
 	size_t Save_steps,
