@@ -62,23 +62,26 @@ TEST_CASE("Chech 1D linear solution",
 	}
 
 	SECTION("Component-by-component comparing")
-	// Сравнение покомпонентно
-	for (size_t i = 0; i < num_ex_sol.size(); i++)
 	{
-		// Было бы наверно логично чтобы сравнение проводилось до 8 знака например
-		REQUIRE( sol[i] == num_ex_sol[i]);
+		// Сравнение покомпонентно
+		for (size_t i = 0; i < num_ex_sol.size(); i++)
+		{
+			// Было бы наверно логично чтобы сравнение проводилось до 8 знака например
+			REQUIRE( sol[i] == num_ex_sol[i]);
+		}
 	}
 
 	// Approximate analytical function along calculation area
 	std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);
 
 	SECTION("Component-by-component comparing with exact solution")
-	// Сравнение покомпонентно
-	for (size_t i = 0; i < num_ex_sol.size(); i++)
-	{
-		// Было бы наверно логично чтобы сравнение проводилось до 8 знака например,
-		// Или вообще не стоит делать такое сравнение т.к. в 1 месте тест падает
-		REQUIRE( sol[i] == u_ex_num[i]);
+	{// Сравнение покомпонентно
+		for (size_t i = 0; i < num_ex_sol.size(); i++)
+		{
+			// Было бы наверно логично чтобы сравнение проводилось до 8 знака например,
+			// Или вообще не стоит делать такое сравнение т.к. в 1 месте тест падает
+			REQUIRE( sol[i] == u_ex_num[i]);
+		}
 	}
 }
 
