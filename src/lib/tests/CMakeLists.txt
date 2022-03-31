@@ -11,6 +11,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 add_executable(catch_tests catch-tests.cpp)
+target_include_directories(catch_tests PRIVATE ../include)
 target_link_libraries(catch_tests PRIVATE ${FEM_PDE_lib})
 target_link_libraries(catch_tests PRIVATE Catch2::Catch2WithMain)
 

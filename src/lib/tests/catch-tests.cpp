@@ -1,10 +1,10 @@
 #include <iostream>
 #include <vector>
 
-#include "../include/FemGrid.h"
-#include "../include/FemPDE.h"
-#include "../include/SolverParams.h"
-#include "../include/Builder.h"
+#include "FemGrid.h"
+#include "FemPDE.h"
+#include "SolverParams.h"
+#include "Builder.h"
 
 #include <catch2/catch_all.hpp>
 #define CATCH_CONFIG_MAIN
