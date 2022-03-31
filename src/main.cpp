@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "lib/headers/Builder.h"
-#include "lib/headers/FemPDE.h"
-#include "lib/headers/SolverParams.h"
-#include "lib/headers/VectorOperations.h"
+#include "lib/include/Builder.h"
+#include "lib/include/FemPDE.h"
+#include "lib/include/SolverParams.h"
+#include "lib/include/VectorOperations.h"
 
 
 double u_ex(const double* point)
@@ -30,7 +30,7 @@ int main(int argc, char const *argv[])
 	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::Thomas, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10);
 
 	FemPDE fempde(&femgridlinear, f_fun, k_fun, params); 
-	// fempde->set_bc() 
+
 	fempde.assemble();
 	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(1));
 	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(2));
