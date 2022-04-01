@@ -8,6 +8,7 @@
 #include "IFiniteElem.h"
 #include "CompressedM.h"
 #include "Solvers.h"
+#include "GlobalAssemblers.h"
 
 //
 // - ∇{k(r)∇{u(r)}} + u(r) = f(r)
@@ -30,9 +31,9 @@ private:
 
 	// @kalininei Может быть их создать на этапе сборки?
 	// Global mass matrix
-	CMatrix M_g;
-	// Global stiffness matrix
-	CMatrix S_g;
+	// CMatrix M_g;
+	// // Global stiffness matrix
+	// CMatrix S_g;
 
 	// lhs_g = (M_g + S_g)
 	CMatrix lhs_g;
@@ -43,6 +44,7 @@ public:
 
 	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(const double*), double (*k_analytical)(const double*), const MatrixSolverParams* parameters);
 	void assemble();
+	void new_assembler();
 	std::vector<double> solve() const;
 	void apply_boundary_condition_dirichlet(double (*u_analytical)(const double*), const std::vector<size_t> &boundary_element_indices);
 

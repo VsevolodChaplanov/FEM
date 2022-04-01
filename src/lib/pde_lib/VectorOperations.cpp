@@ -106,16 +106,15 @@ bool check_matrix_sym(CMatrix &Matrix)
     return result;
 }
 
-void summ_cm(CMatrix &A, CMatrix &B, CMatrix &Lhs)
+void summ_cm(const CMatrix &A, const CMatrix &B, CMatrix &Lhs)
 {
 	std::size_t N = A.size();
-	Lhs = A;
 	for (size_t i = 0; i < N; i++)
 	{
-		// for (auto elem : A[i])
-		// {
-		// 	Lhs.SetValue(i, elem.first, Lhs.GetValue(i, elem.first) + elem.second);
-		// }
+		for (auto elem : A[i])
+		{
+			Lhs.SetValue(i, elem.first, Lhs.GetValue(i, elem.first) + elem.second);
+		}
 		for (auto elem : B[i])
 		{
 			Lhs.SetValue(i, elem.first, Lhs.GetValue(i, elem.first) + elem.second);

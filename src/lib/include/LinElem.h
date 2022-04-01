@@ -49,6 +49,13 @@ public:
 	// Get global indices
 	const std::vector<size_t>& get_global_indices() const override;
 	~LinElem();
+
+	// Returns mass matrix element
+	const std::vector<double> get_mass_matrix() const override;
+	// Returns stiffness matrix element					
+	const std::vector<double> get_stiffness_matrix() const override;
+	// Returns lumpred mass matrix element
+	const std::vector<double> get_lumped_matrix() const override;
 	
 private: // Methods
 

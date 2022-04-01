@@ -30,8 +30,12 @@ int main(int argc, char const *argv[])
 	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::Thomas, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10);
 
 	FemPDE fempde(&femgridlinear, f_fun, k_fun, params); 
+	FemPDE fempde_test(&femgridlinear, f_fun, k_fun, params); 
 
 	fempde.assemble();
+	fempde_test.new_assembler();
+
+
 	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(1));
 	fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(2));
 	// 	fempde->apply_boundary_condition_dirichlet(u_exact, femgridlinear->boundary_element_indices()); All

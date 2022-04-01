@@ -10,6 +10,7 @@ set(LIB_CPPS pde_lib/Builder.cpp
 	pde_lib/Preconditioners.cpp
 	pde_lib/Solvers.cpp
 	pde_lib/VectorOperations.cpp
+	pde_lib/GlobalAssemblers.cpp
 )
 
 set(HEADERS include/Builder.h
@@ -24,6 +25,7 @@ set(HEADERS include/Builder.h
 	include/Preconditioners.h
 	include/Solvers.h
 	include/VectorOperations.h
+	include/GlobalAssemblers.h
 )
 
 

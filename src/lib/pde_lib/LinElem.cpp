@@ -81,4 +81,20 @@ size_t LinElem::get_element_type() const
 
 LinElem::~LinElem() { }
 
+const std::vector<double> LinElem::get_mass_matrix() const
+{
+	std::vector<double> local (mass_matrix.begin(), mass_matrix.end());
+	return local;
+}
+const std::vector<double> LinElem::get_stiffness_matrix() const
+{
+	std::vector<double> local (stiffness_matrix.begin(), stiffness_matrix.end());
+	return local;
+}
+const std::vector<double> LinElem::get_lumped_matrix() const
+{
+	std::vector<double> local (lumped_mass_matrix.begin(), lumped_mass_matrix.end());
+	return local;
+}
+
 // #endif

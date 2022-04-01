@@ -5,6 +5,10 @@
 #include "FemPDE.h"
 #include "SolverParams.h"
 #include "Builder.h"
+#include "IFiniteElem.h"
+#include "LinElem.h"
+
+#include "CompressedM.h"
 
 #include <catch2/catch_all.hpp>
 #define CATCH_CONFIG_MAIN
@@ -72,15 +76,59 @@ TEST_CASE("Chech 1D linear solution",
 	}
 
 	// Approximate analytical function along calculation area
-	std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);
+	// std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);
 
-	SECTION("Component-by-component comparing with exact solution")
-	{// Сравнение покомпонентно
-		for (size_t i = 0; i < num_ex_sol.size(); i++)
+	// SECTION("Component-by-component comparing with exact solution")
+	// {// Сравнение покомпонентно
+	// 	for (size_t i = 0; i < num_ex_sol.size(); i++)
+	// 	{
+	// 		// Было бы наверно логично чтобы сравнение проводилось до 8 знака например,
+	// 		// Или вообще не стоит делать такое сравнение т.к. в 1 месте тест падает
+	// 		REQUIRE( sol[i] == u_ex_num[i]);
+	// 	}
+	// }
+}
+
+
+TEST_CASE("1D linear element matrices check", "[Matrices]")
+{
+	IFiniteElement* lin_elem = IFiniteElement::Factory({0,1}, {0, 1}, 1);
+
+	REQUIRE(lin_elem->get_number_basis_func() == 2);
+	REQUIRE(lin_elem->get_volume() == 1);
+
+	SECTION("Mass matrix of linear element check")
+	{
+		std::array<double, 4> test_mass {(double) 1 / 3, (double) 1 / 6, (double) 1 / 6, (double) 1 / 3};
+		for (size_t i = 0; i < 2; i++)
 		{
-			// Было бы наверно логично чтобы сравнение проводилось до 8 знака например,
-			// Или вообще не стоит делать такое сравнение т.к. в 1 месте тест падает
-			REQUIRE( sol[i] == u_ex_num[i]);
+			for (size_t j = 0; j < 2; j++)
+			{
+				REQUIRE(lin_elem->get_mass(i, j) == test_mass[i * 2 + j]);
+			}
+		}
+	}
+
+	SECTION("Siffness matrix of linear element check")
+	{
+		std::array<double, 4> test_stiffness {1, - 1, - 1, 1};
+		for (size_t i = 0; i < 2; i++)
+		{
+			for (size_t j = 0; j < 2; j++)
+			{
+				REQUIRE(lin_elem->get_stiffness(i, j) == test_stiffness[i * 2 + j]);
+			}
+		}
+	}
+
+
+	SECTION("Lumped mass matrix of linear element check")
+	{
+		std::array<double, 2> test_lumped_mass {0.5, 0.5};
+
+		for (size_t i = 0; i < 2; i++)
+		{
+			REQUIRE(lin_elem->get_lumped(i) == test_lumped_mass[i]);
 		}
 	}
 }

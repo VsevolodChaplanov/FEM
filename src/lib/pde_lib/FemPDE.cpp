@@ -24,8 +24,9 @@ void FemPDE::assemble()
 {
 	std::vector<double> k_vec = make_k_vec_center();
 
-	M_g.resize(Nvert); // Тут скорее всего (порядок аппроксимации) * (число элементов) + 1
-	S_g.resize(Nvert);
+	CMatrix M_g(Nvert);
+	CMatrix S_g(Nvert);
+
 	lhs_g.resize(Nvert);
 	rhs_g.resize(Nvert);
 
@@ -86,6 +87,27 @@ std::vector<double> FemPDE::make_k_vec_center()
 		k_vec[i] = k_func(fin_elem_mesh->get_element(i)->get_center_coordinates());
 	}
 	return k_vec;
+}
+
+void FemPDE::new_assembler()
+{
+	std::vector<double> k_vec = make_k_vec_center();
+
+	GLobalMatrixAssembler* mass_assembler = new GLobalMatrixAssembler(Nvert);
+	GLobalMatrixAssembler* stiffness_assembler = new GLobalMatrixAssembler(Nvert);
+
+
+	lhs_g.resize(Nvert);
+	rhs_g.resize(Nvert);
+
+	for (size_t k = 0; k < Nelem; k++)
+	{
+		const IFiniteElement* ifiniteelement = fin_elem_mesh->get_element(k);
+		mass_assembler->add_local_matrix(ifiniteelement->get_global_indices(), ifiniteelement->get_mass_matrix());
+		stiffness_assembler->add_local_matrix(ifiniteelement->get_global_indices(), ifiniteelement->get_stiffness_matrix(), k_vec[k]);
+	}
+	summ_cm(mass_assembler->get_result(), stiffness_assembler->get_result(), lhs_g);
+	rhs_g = mass_assembler->get_result() * fin_elem_mesh->approximate(f_func);
 }
 
 // #endif

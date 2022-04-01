@@ -30,6 +30,6 @@ void write_in_file(const std::vector<double> &a, const std::string &Filename);
 
 bool check_matrix_sym(CMatrix &Matrix);
 
-void summ_cm(CMatrix &A, CMatrix &B, CMatrix &Lhs);
+void summ_cm(const CMatrix &A, const CMatrix &B, CMatrix &Lhs);
 
 #endif

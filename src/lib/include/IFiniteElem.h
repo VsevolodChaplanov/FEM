@@ -39,6 +39,13 @@ public:
 	// Get global indices
 	virtual const std::vector<size_t>& get_global_indices() const = 0;
 	virtual ~IFiniteElement();
+
+		// Returns mass matrix element
+	virtual const std::vector<double> get_mass_matrix() const = 0;
+	// Returns stiffness matrix element					
+	virtual const std::vector<double> get_stiffness_matrix() const = 0;
+	// Returns lumpred mass matrix element
+	virtual const std::vector<double> get_lumped_matrix() const = 0;
 };
 
 
