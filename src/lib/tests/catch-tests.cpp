@@ -9,6 +9,7 @@
 #include "IFiniteElem.h"
 #include "LinElem.h"
 #include "GlobalAssemblers.h"
+#include "VectorOperations.h"
 
 #include "CompressedM.h"
 
@@ -30,6 +31,7 @@ double k_fun(const double* point)
 	return 1.0 / (18 * 18 * (point[0] + 0.2));
 }
 
+// Общий тест
 TEST_CASE("Chech 1D linear solution", 
 	"[1D solution]")
 {
@@ -91,7 +93,7 @@ TEST_CASE("Chech 1D linear solution",
 	// }
 }
 
-
+// Тест локальных матриц
 TEST_CASE( "1D linear element matrices check", "[LocalMatrices]" )
 {
 	IFiniteElement* lin_elem = IFiniteElement::Factory({0,1}, {0, 1}, 1);
@@ -137,6 +139,7 @@ TEST_CASE( "1D linear element matrices check", "[LocalMatrices]" )
 	delete lin_elem;
 }
 
+// Тест глобальных матриц
 TEST_CASE( "Global matrices check", "[GlobalMatrices]" )
 {
 	FemGrid lin_ex = Builder::BuildLinear1DGrid(0, 1, 4);
@@ -191,16 +194,47 @@ TEST_CASE( "Global matrices check", "[GlobalMatrices]" )
 	CMatrix mass_test = mass_g_matrix.get_result();
 	CMatrix stiff_test = stiffness_g_matrix.get_result();
 
-	for (size_t i = 0; i < 5; i++)
+
+	SECTION( "Global matrices check" )
 	{
-		for (size_t j = 0; j < 5; j++)
+		for (size_t i = 0; i < 5; i++)
 		{
-			INFO( "i = " << i);
-			INFO( "j = " << j);
-			
-			REQUIRE( mass_test.GetValue(i, j) == Catch::Approx(mass_ex.GetValue(i, j)) );
-			REQUIRE( stiff_test.GetValue(i, j) == stiff_ex.GetValue(i, j) );
+			for (size_t j = 0; j < 5; j++)
+			{
+				INFO( "i = " << i);
+				INFO( "j = " << j);
+				
+				// Тест падает на величинах 1.666666667 == 1.666666667 
+				REQUIRE( mass_test.GetValue(i, j) == Catch::Approx(mass_ex.GetValue(i, j)) );
+				REQUIRE( stiff_test.GetValue(i, j) == Catch::Approx(stiff_ex.GetValue(i, j)) );
+			}
 		}
 	}
 }
 
+TEST_CASE( "Degree of approximation", "[ApproxCheck]" )
+{
+	std::vector<double> norm2a_cont;
+
+	for (size_t N = 10; N < 10001; N *= 10)
+	{
+		FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, N); // Для ГУ на границе стоит элемент порядка ниже
+		MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::Thomas, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10);
+		FemPDE fempde(&femgridlinear, f_fun, k_fun, params); 
+		fempde.new_assembler();
+
+		fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(1));
+		fempde.apply_boundary_condition_dirichlet(u_ex, femgridlinear.boundary_element_indices(2));	
+		std::vector<double> sol = fempde.solve();
+		std::vector<double> u_ex_num = femgridlinear.approximate(u_ex);
+		std::vector<double> difference = vector_diff(sol, u_ex_num);
+		norm2a_cont.push_back(femgridlinear.norm2(difference));
+	}
+
+	for (const double elem : norm2a_cont)
+	{
+		std::cout << elem << std::endl;
+	}
+
+	// TODO адекватную проверку на порядок аппроксимации
+}
