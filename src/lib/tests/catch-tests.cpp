@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <limits>
 
 #include "FemGrid.h"
 #include "FemPDE.h"
@@ -7,6 +8,7 @@
 #include "Builder.h"
 #include "IFiniteElem.h"
 #include "LinElem.h"
+#include "GlobalAssemblers.h"
 
 #include "CompressedM.h"
 
@@ -60,18 +62,18 @@ TEST_CASE("Chech 1D linear solution",
 
 	std::vector<double> sol = fempde.solve(); // вектор решения ин в самом методе
 
-	SECTION("Vector dimensions check")
+	SECTION( "Vector dimensions check" )
 	{
-		REQUIRE( sol.size() == num_ex_sol.size());
+		REQUIRE( sol.size() == num_ex_sol.size() );
 	}
 
-	SECTION("Component-by-component comparing")
+	SECTION( "Component-by-component comparing" )
 	{
 		// Сравнение покомпонентно
 		for (size_t i = 0; i < num_ex_sol.size(); i++)
 		{
 			// Было бы наверно логично чтобы сравнение проводилось до 8 знака например
-			REQUIRE( sol[i] == num_ex_sol[i]);
+			REQUIRE( sol[i] == num_ex_sol[i] );
 		}
 	}
 
@@ -90,26 +92,26 @@ TEST_CASE("Chech 1D linear solution",
 }
 
 
-TEST_CASE("1D linear element matrices check", "[Matrices]")
+TEST_CASE( "1D linear element matrices check", "[LocalMatrices]" )
 {
 	IFiniteElement* lin_elem = IFiniteElement::Factory({0,1}, {0, 1}, 1);
 
-	REQUIRE(lin_elem->get_number_basis_func() == 2);
-	REQUIRE(lin_elem->get_volume() == 1);
+	REQUIRE( lin_elem->get_number_basis_func() == 2 );
+	REQUIRE( lin_elem->get_volume() == 1 );
 
-	SECTION("Mass matrix of linear element check")
+	SECTION( "Mass matrix of linear element check" )
 	{
 		std::array<double, 4> test_mass {(double) 1 / 3, (double) 1 / 6, (double) 1 / 6, (double) 1 / 3};
 		for (size_t i = 0; i < 2; i++)
 		{
 			for (size_t j = 0; j < 2; j++)
 			{
-				REQUIRE(lin_elem->get_mass(i, j) == test_mass[i * 2 + j]);
+				REQUIRE( lin_elem->get_mass(i, j) == test_mass[i * 2 + j] );
 			}
 		}
 	}
 
-	SECTION("Siffness matrix of linear element check")
+	SECTION( "Siffness matrix of linear element check" )
 	{
 		std::array<double, 4> test_stiffness {1, - 1, - 1, 1};
 		for (size_t i = 0; i < 2; i++)
@@ -122,13 +124,82 @@ TEST_CASE("1D linear element matrices check", "[Matrices]")
 	}
 
 
-	SECTION("Lumped mass matrix of linear element check")
+	SECTION( "Lumped mass matrix of linear element check" )
 	{
 		std::array<double, 2> test_lumped_mass {0.5, 0.5};
 
 		for (size_t i = 0; i < 2; i++)
 		{
-			REQUIRE(lin_elem->get_lumped(i) == test_lumped_mass[i]);
+			REQUIRE( lin_elem->get_lumped(i) == test_lumped_mass[i] );
+		}
+	}
+
+	delete lin_elem;
+}
+
+TEST_CASE( "Global matrices check", "[GlobalMatrices]" )
+{
+	FemGrid lin_ex = Builder::BuildLinear1DGrid(0, 1, 4);
+
+	GLobalMatrixAssembler mass_g_matrix(5);
+	GLobalMatrixAssembler stiffness_g_matrix(5);
+
+	// Assemble test mass matrix
+	for (size_t i = 0; i < 4; i++)
+	{
+		mass_g_matrix.add_local_matrix(lin_ex.get_element(i)->get_global_indices(), lin_ex.get_element(i)->get_mass_matrix());
+	}
+
+	// Assemble test stiffness matrix
+	// k = 1
+	for (size_t i = 0; i < 4; i++)
+	{
+		stiffness_g_matrix.add_local_matrix(lin_ex.get_element(i)->get_global_indices(), lin_ex.get_element(i)->get_stiffness_matrix(), 1);
+	}
+
+	CMatrix mass_ex(5);
+	CMatrix stiff_ex(5);
+
+	mass_ex.SetValue(0, 0, 0.083333333333333329);
+	mass_ex.SetValue(0, 1, 0.041666666666666664);
+	mass_ex.SetValue(1, 0, 0.041666666666666664);
+	mass_ex.SetValue(1, 1, 0.16666666666666666);
+	mass_ex.SetValue(1, 2, 0.041666666666666664);
+	mass_ex.SetValue(2, 1, 0.041666666666666664);
+	mass_ex.SetValue(2, 2, 0.1666666666666666);
+	mass_ex.SetValue(2, 3, 0.041666666666666664);
+	mass_ex.SetValue(3, 2, 0.041666666666666664);
+	mass_ex.SetValue(3, 3, 0.16666666666666666);
+	mass_ex.SetValue(3, 4, 0.041666666666666664);
+	mass_ex.SetValue(4, 3, 0.041666666666666664);
+	mass_ex.SetValue(4, 4, 0.083333333333333329);
+
+	stiff_ex.SetValue(0, 0, 4);
+	stiff_ex.SetValue(0, 1, -4);
+	stiff_ex.SetValue(1, 0, -4);
+	stiff_ex.SetValue(1, 1, 8);
+	stiff_ex.SetValue(1, 2, -4);
+	stiff_ex.SetValue(2, 1, -4);
+	stiff_ex.SetValue(2, 2, 8);
+	stiff_ex.SetValue(2, 3, -4);
+	stiff_ex.SetValue(3, 2, -4);
+	stiff_ex.SetValue(3, 3, 8);
+	stiff_ex.SetValue(3, 4, -4);
+	stiff_ex.SetValue(4, 3, -4);
+	stiff_ex.SetValue(4, 4, 4);
+
+	CMatrix mass_test = mass_g_matrix.get_result();
+	CMatrix stiff_test = stiffness_g_matrix.get_result();
+
+	for (size_t i = 0; i < 5; i++)
+	{
+		for (size_t j = 0; j < 5; j++)
+		{
+			INFO( "i = " << i);
+			INFO( "j = " << j);
+			
+			REQUIRE( mass_test.GetValue(i, j) == Catch::Approx(mass_ex.GetValue(i, j)) );
+			REQUIRE( stiff_test.GetValue(i, j) == stiff_ex.GetValue(i, j) );
 		}
 	}
 }
