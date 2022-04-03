@@ -1,7 +1,5 @@
 build
 .vscode
-CMakeLists.txt
 Wolfram
-src/tests
 src/lib/pde_lib/TriangleElem.cpp
 src/lib/include/TriangleElem.h
