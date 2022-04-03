@@ -210,8 +210,34 @@ TEST_CASE( "Global matrices check", "[GlobalMatrices]" )
 			}
 		}
 	}
+
+	SECTION("Right hand side vector check", "[RhsCheck]")
+	{
+		std::vector<double> rhs_ex {0.125,
+			0.24999999999999997,
+			0.24999999999999997,
+			0.24999999999999997,
+			0.125
+		};
+
+		std::vector<double> I(5, 1.);
+		std::vector<double> rhs_test = mass_test * I;
+
+		for (const auto elem : I)
+		{
+			std::cout << elem << std::endl;
+		}
+		
+
+		for (size_t i = 0; i < 5; i++)
+		{	
+			INFO( "i = " << i);
+			REQUIRE( rhs_test[i] == rhs_ex[i] );
+		}
+	}
 }
 
+// Тест порядка аппроксимации
 TEST_CASE( "Degree of approximation", "[ApproxCheck]" )
 {
 	std::vector<double> norm2a_cont;
@@ -238,3 +264,4 @@ TEST_CASE( "Degree of approximation", "[ApproxCheck]" )
 
 	// TODO адекватную проверку на порядок аппроксимации
 }
+

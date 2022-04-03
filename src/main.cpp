@@ -13,7 +13,8 @@ double u_ex(const double* point)
 
 double f_fun(const double* point)
 {
-	return (point[0]+1.2) * u_ex(point);
+	return 1;
+	//return (point[0]+1.2) * u_ex(point);
 }
 
 double k_fun(const double* point)
