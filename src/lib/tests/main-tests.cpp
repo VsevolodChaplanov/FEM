@@ -1,12 +1,3 @@
-#include "FemGrid.h"
-#include "FemPDE.h"
-#include "SolverParams.h"
-#include "Builder.h"
-#include "IFiniteElem.h"
-#include "LinElem.h"
-#include "GlobalAssemblers.h"
-#include "VectorOperations.h"
-#include "CompressedM.h"
 #include <vector>
 #include <limits>
 #include "catch-tests.h"

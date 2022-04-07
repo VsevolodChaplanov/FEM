@@ -1,17 +1,9 @@
 #define CATCH_CONFIG_RUNNER
 #include "catch-tests.h"
-#include "FemGrid.h"
-#include "FemPDE.h"
-#include "SolverParams.h"
-#include "Builder.h"
-#include "IFiniteElem.h"
-#include "LinElem.h"
-#include "GlobalAssemblers.h"
-#include "VectorOperations.h"
-#include "CompressedM.h"
 #include <vector>
 #include <limits>
 
+#define __UNIT_TESTS__ 
 
 double u_ex(const double* point)
 {
@@ -562,3 +554,16 @@ TEST_CASE( "Math operations", "[Math]" )
 	}
 }
 
+TEST_CASE( "Finite elements mesh parser (.vtk)", "[VtkParser]" )
+{
+	vtk_p_Tester test_vtk("/home/vsevolod/University/Programing/С++/FEM/2dim/src/lib/tests/Rect.1.1mesh.1.vtk");
+
+	test_vtk.load_mesh();
+
+	REQUIRE( test_vtk.get_vertices_number() == 98 );
+	REQUIRE( test_vtk.get_elements_number() == 198 );
+
+	// TODO сравнить пару узлов и элементов и их типы
+}
+
+#undef __UNIT_TESTS__

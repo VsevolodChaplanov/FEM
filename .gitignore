@@ -3,3 +3,4 @@ build
 Wolfram
 src/lib/pde_lib/TriangleElem.cpp
 src/lib/include/TriangleElem.h
+src/lib/tests/Rect.1.1mesh.1.vtk

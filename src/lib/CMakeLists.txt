@@ -11,6 +11,7 @@ set(LIB_CPPS pde_lib/Builder.cpp
 	pde_lib/Solvers.cpp
 	pde_lib/VectorOperations.cpp
 	pde_lib/GlobalAssemblers.cpp
+	pde_lib/FiniteElemMeshParser.cpp
 )
 
 set(HEADERS include/Builder.h
@@ -26,11 +27,19 @@ set(HEADERS include/Builder.h
 	include/Solvers.h
 	include/VectorOperations.h
 	include/GlobalAssemblers.h
+	include/FiniteElemMeshParser.h
 )
 
 set(FEM_PDE_lib fem_lib)
 
+find_package(Boost REQUIRED)
+if(Boost_FOUND)
+	message("Success, \"BOOST\" found")
+endif()
+
 include_directories( include pde_lib tests)
 add_library(${FEM_PDE_lib} SHARED ${LIB_CPPS} ${HEADERS})
+target_include_directories(${FEM_PDE_lib} PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(${FEM_PDE_lib} PRIVATE ${Boost_LIBARARIES})
 
 add_subdirectory(tests)
