@@ -10,17 +10,19 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(catch_tests catch-tests.cpp)
-target_include_directories(catch_tests PRIVATE ../include)
-target_link_libraries(catch_tests PRIVATE ${FEM_PDE_lib})
-target_link_libraries(catch_tests PRIVATE Catch2::Catch2WithMain)
+set(SRC catch-tests.cpp
+	main-tests.cpp)
+set(HEADERS catch-tests.h)
 
-set_target_properties(catch_tests
-	PROPERTIES 
-		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests
-)
+set(LIB_TESTS fem_pde_lib-test)
+
+add_executable(${LIB_TESTS} ${SRC} ${HEADERS})
+
+target_link_libraries(${LIB_TESTS} PRIVATE ${FEM_PDE_lib})
+target_link_libraries(${LIB_TESTS} PRIVATE Catch2::Catch2)
+target_include_directories(${LIB_TESTS} PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/include)
+link_directories(${catch2_SOURCE_DIR})
 
 include(CTest)
-
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(Catch)

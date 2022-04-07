@@ -10,6 +10,11 @@
 
 FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
 {
+	if (right < left)
+	{
+		throw std::invalid_argument( "Recieved wrong arguments for bounds" );
+	}
+	
 	std::vector<IFiniteElement*> elements;
 	std::vector<double> vertices(N + 1);
 	std::vector<IBoundaryElement*> boundary_elements;

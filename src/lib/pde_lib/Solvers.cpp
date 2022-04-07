@@ -288,9 +288,9 @@ void SOR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::
 
 void Thomas_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
-	if (CheckTridiagonal(Lhs) == false)
+	if (CheckTridiagonal(Lhs))
 	{
-		std::cout << "Система не является трёхдиагональной" << std::endl;
+		throw std::runtime_error("Matrix is not tridiagonal");
 	}
 	double start_time = clock();
 	size_t N = Lhs.size();
@@ -318,7 +318,13 @@ bool Thomas_Solver::CheckTridiagonal(const CMatrix& Lhs)
 	bool check_result = true;
 	for (size_t i = 0; i < Lhs.size(); i++)
 	{
-		Lhs[i].size() <= 3 ? check_result = true : check_result = false;
+		for (const auto line : Lhs[i])
+		{
+			if (line.first == i || line.first == i - 1 || line.first == i + 1)
+			{
+				return false;
+			}
+		}
 	}
 	return check_result;
 }
@@ -628,107 +634,3 @@ GD_Solver_P::GD_Solver_P(const MatrixSolverParams* parameters, IPreconditioner* 
 {
 	this->Preconditioner = Preconditioner;
 }
-
-// IMatrixSolver* IMatrixSolver::Fabric(const std::string& method_name)
-// {
-// 	if (method_name == "GD")
-// 	{
-// 		return new GD_Solver();
-// 	} 
-// 	else if (method_name == "MR")
-// 	{
-// 		return new MR_Solver();
-// 	} 
-// 	else if (method_name == "CG")
-// 	{
-// 		return new CG_Solver();
-// 	} 
-// 	else if (method_name == "SSOR")
-// 	{
-// 		return new SSOR_Solver();
-// 	} 
-// 	else if (method_name == "SOR")
-// 	{
-// 		return new SOR_Solver();
-// 	} 
-// 	else if (method_name == "Seidel")
-// 	{
-// 		return new Seidel_Solver();
-// 	}
-// 	else if (method_name == "Jacobi")
-// 	{
-// 		return new Jacobi_Solver();
-// 	}
-// 	else if (method_name == "LU")
-// 	{
-// 		return new LU_Solver();
-// 	}
-// 	else if (method_name == "LDU")
-// 	{
-// 		return new LDU_Solver();
-// 	}
-// 	return new Thomas_Solver();
-// }
-
-// IMatrixSolver* IMatrixSolver::Fabric(const std::string &method_name, const double omega)
-// {
-// 	if (method_name == "SSOR")
-// 	{
-// 		SSOR_Solver* solver = new SSOR_Solver();
-// 		solver->SetOmega(omega);
-// 		return solver;
-// 	} else if (method_name == "SOR")
-// 	{
-// 		SOR_Solver* solver = new SOR_Solver();
-// 		solver->SetOmega(omega);
-// 		return solver;
-// 	}
-// 	SOR_Solver* solver = new SOR_Solver();
-// 	solver->SetOmega(omega);
-// 	return solver;
-// }
-
-// IMatrixSolver* IMatrixSolver::Fabric_P(const std::string &method_name, const std::string &Precondition_method)
-// {
-// 	IPreconditioner* Preconditioner = IPreconditioner::Fabric(Precondition_method);
-// 	if (method_name == "CG")
-// 	{
-// 		return new CG_Solver_P(Preconditioner);
-// 	}
-// 	else if(method_name == "GD")
-// 	{
-// 		return new GD_Solver_P(Preconditioner);
-// 	}
-// 	return new GD_Solver_P(Preconditioner);
-// }
-
-// IMatrixSolver* IMatrixSolver::Fabric_P(const std::string &method_name, const std::string &Precondition_method, const double omega)
-// {
-// 	IPreconditioner* Preconditioner = IPreconditioner::Fabric(Precondition_method, omega);
-// 	if (method_name == "CG")
-// 	{
-// 		return new CG_Solver_P(Preconditioner);
-// 	}
-// 	else if(method_name == "GD")
-// 	{
-// 		return new GD_Solver_P(Preconditioner);
-// 	}
-// 	return new GD_Solver_P(Preconditioner);
-// }
-
-// void SolversParams_SOR_SSOR::set_params( MatrixSolverParams::Methods method = Thomas,
-// 	MatrixSolverParams::Preconditioners precondition_method = None,
-// 	size_t MAX_ITERATIONS = 10000000,
-// 	double eps = 1.e-5,
-// 	size_t Save_steps = 10,
-// 	double omega = 1.95)
-// {
-// 	solve_method = method;
-// 	precondition_method = precondition_method;
-// 	MAX_ITERATIONS = MAX_ITERATIONS;
-// 	eps = eps;
-// 	Save_steps = Save_steps;
-// 	omega = omega;
-// }
-
-// #endif

@@ -28,8 +28,9 @@ set(HEADERS include/Builder.h
 	include/GlobalAssemblers.h
 )
 
+set(FEM_PDE_lib fem_lib)
 
-add_library(${FEM_PDE_lib} STATIC ${LIB_CPPS} ${HEADERS})
-target_include_directories(${FEM_PDE_lib} PRIVATE include)
+include_directories( include pde_lib tests)
+add_library(${FEM_PDE_lib} SHARED ${LIB_CPPS} ${HEADERS})
 
 add_subdirectory(tests)

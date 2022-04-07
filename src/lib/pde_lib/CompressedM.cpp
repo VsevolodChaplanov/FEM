@@ -34,17 +34,8 @@ CMatrix::CMatrix(size_t N, const std::string &Random)
 		// Здесь можно записать всё в несколько строк, но таким образом удобнее пользоваться отладкой
 		int first = Coloumn(gen);
 		int first_number = Number(gen);
-		//int second = Coloumn(gen);
-		//int second_number = Number(gen);
-		//int third = Coloumn(gen);
-		//int third_number = Number(gen);
 		CompressedMatrix[i].insert(std::make_pair(first, first_number));
-		//CompressedMatrix[i].insert(std::make_pair(second, second_number));
-		//CompressedMatrix[i].insert(std::make_pair(third, third_number));
-
 		CompressedMatrix[first].insert(std::make_pair(i, first_number));
-		//CompressedMatrix[second].insert(std::make_pair(i, second_number));
-		//CompressedMatrix[third].insert(std::make_pair(i, third_number));
 	} // i
 
 	// На "диагональ" поставт сумму всех элементов в строке + 1 для диагонального преобладания
@@ -78,7 +69,16 @@ double CMatrix::GetValue(size_t i, size_t j) const
 // Добавить элемент (а) в матрицу на место [i,j] 
 void CMatrix::SetValue(size_t i, size_t j, double a)
 {
-	CompressedMatrix[i][j] = a;
+	if(a == 0) 
+	{	
+		// For constructions like:
+		// Matrix.SetValue(i, j, Matrix.GetValue(i, j) + a)
+		// if *Matrix.GetValue(i, j) + a* == 0 need to clear element i,j
+		CompressedMatrix[i].erase(j);
+	} else
+	{
+		CompressedMatrix[i][j] = a;
+	}
 }
 
 // Умонжение разреженной матрицы на вектор
@@ -163,19 +163,6 @@ CMatrix CMatrix::operator=(CMatrix &Matrix_A)
 	}
 	return *this;
 }
-// CMatrix CMatrix::operator=(const CMatrix &Matrix_A)
-// {
-// 	// Результат новая матрица B
-// 	CMatrix B(Matrix_A.size());
-
-// 	for (size_t i = 0; i < Matrix_A.size(); i++)
-// 	{
-// 		B[i] = Matrix_A[i];
-// 	} // i
-	
-// 	return B;
-// }
-
 
 // Возвращает число строк матрицы
 size_t CMatrix::size() const

@@ -1,31 +1,22 @@
-#include <iostream>
-
-#include "Builder.h"
+#include "FemGrid.h"
 #include "FemPDE.h"
 #include "SolverParams.h"
+#include "Builder.h"
+#include "IFiniteElem.h"
+#include "LinElem.h"
+#include "GlobalAssemblers.h"
 #include "VectorOperations.h"
-
-
-double u_ex(const double* point)
-{
-	return sin(9 * (point[0]+0.2) * (point[0]+0.2));
-}
-
-double f_fun(const double* point)
-{
-	return 1;
-	//return (point[0]+1.2) * u_ex(point);
-}
-
-double k_fun(const double* point)
-{
-	return 1.0 / (18 * 18 * (point[0] + 0.2));
-}
+#include "CompressedM.h"
+#include <vector>
+#include <limits>
+#include "catch-tests.h"
 
 int main(int argc, char const *argv[])
 {
+	int result = Catch::Session().run(argc, argv);
+
 	// Builder mathes to left boundary 1 to right boundary 2
-	FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, 4); // Для ГУ на границе стоит элемент порядка ниже
+	FemGrid femgridlinear = Builder::BuildLinear1DGrid(0, 1, 10); // Для ГУ на границе стоит элемент порядка ниже
 	// femgtidlinear->assign_boundary_type(selector , type)
 
 	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::Thomas, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10);
@@ -66,5 +57,6 @@ int main(int argc, char const *argv[])
 	std::cout << "Second norm: " << norm2 << std::endl;
 	std::cout << "Second norm within approximation: " << norm2a << std::endl;
 
+	delete params;
 	return 0;
 }
