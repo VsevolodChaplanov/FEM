@@ -153,6 +153,13 @@ TEST_CASE( "1D linear element matrices check", "[LocalMatrices]" )
 	delete lin_elem;
 }
 
+TEST_CASE( "Triangle element check", "[TriangleElem]")
+{
+	IFiniteElement* triangle_test_1 = IFiniteElement::Factory({0,0,0,1,0,0,0,1,0}, {0, 1, 2}, 2);
+
+	delete triangle_test_1;
+}
+
 // -------------------- Point boundary element
 TEST_CASE( "Point boundary element", "[PountElementCheck]" )
 {
@@ -562,8 +569,193 @@ TEST_CASE( "Finite elements mesh parser (.vtk)", "[VtkParser]" )
 
 	REQUIRE( test_vtk.get_vertices_number() == 98 );
 	REQUIRE( test_vtk.get_elements_number() == 198 );
+	REQUIRE( test_vtk.get_cell_types().size() == 198);
 
-	// TODO сравнить пару узлов и элементов и их типы
+	std::vector<double> vertices_test = test_vtk.get_vertices();
+	std::vector<std::vector<size_t>> cells_test = test_vtk.get_cells();
+	std::vector<size_t> cell_types_test = test_vtk.get_cell_types();
+
+	SECTION( "Vertices check" )
+	{
+		// First vertice
+		for (size_t i = 0; i < 3; i++)
+		{
+			CHECK( vertices_test[i] == 0.0 );
+		}
+		
+		// Random vertice from the centre
+		CHECK( vertices_test[177] ==  0.31331768157997741);
+		CHECK( vertices_test[178] ==  0.75237107335505982);
+		CHECK( vertices_test[179] ==  0.0);
+
+		// Last vertice
+		CHECK( vertices_test[98 * 3 - 1] == 0.0);
+		CHECK( vertices_test[98 * 3 - 2] == 0.8253550026152658);
+		CHECK( vertices_test[98 * 3 - 3] == 0.7489644266062752);
+	}
+
+	SECTION( "Cells vertices check", "[Cells]" )
+	{
+		// Nodes of the rectangle
+		REQUIRE( cells_test[0].size() == 1);
+		CHECK( cells_test[0][0] == 0 );
+		// Edges of the rectangle
+		REQUIRE( cells_test[4].size() == 2);
+		CHECK( cells_test[4][0] == 0 );
+		CHECK( cells_test[4][1] == 4 );
+		// Internal triangles
+		REQUIRE( cells_test[37].size() == 3);
+		CHECK( cells_test[36][0] == 67);
+		CHECK( cells_test[36][1] == 78);
+		CHECK( cells_test[36][2] == 37);
+		// Last triangle
+		REQUIRE( cells_test[197].size() == 3);
+		CHECK( cells_test[97][0] == 6);
+		CHECK( cells_test[97][1] == 36);
+		CHECK( cells_test[97][2] == 5);
+		// Last triangle
+		REQUIRE( cells_test[197].size() == 3);
+		CHECK( cells_test[197][0] == 82);
+		CHECK( cells_test[197][1] == 97);
+		CHECK( cells_test[197][2] == 60);
+	}
+
+	SECTION( "Cell types check" )
+	{
+		// All cell types check
+		for (std::vector<size_t>::iterator it = cell_types_test.begin(); it != cell_types_test.begin() + 4; it++)
+		{
+			CHECK( *it == 1 );
+		}
+		for (std::vector<size_t>::iterator it = cell_types_test.begin() + 4; it != cell_types_test.begin() + 36; it++)
+		{
+			CHECK( *it == 3 );
+		}
+		for (std::vector<size_t>::iterator it = cell_types_test.begin() + 36; it != cell_types_test.end(); it++)
+		{
+			CHECK( *it == 5 );
+		}
+	}
+}
+
+TEST_CASE( "Finite lements mesh builder from file .vtk", "[BuildAlgoTest]" )
+{
+	const std::string filename = "/home/vsevolod/University/Programing/С++/FEM/2dim/src/lib/tests/Rect.1.1mesh.1.vtk";
+	//FemGrid triang_test = Builder::BuildFromFile(filename);
+
+	size_t p_dim = 2;
+
+	VtkFEMParser parser(filename);
+
+	parser.load_mesh();
+
+	std::vector<double> vertices = parser.get_vertices();
+	std::vector<std::vector<size_t>> cells = parser.get_cells();
+	std::vector<size_t> cell_types = parser.get_cell_types();
+
+	size_t Nelem = parser.get_elements_number();
+	size_t Nvert = parser.get_vertices_number();
+
+	std::vector<IFiniteElement*> elements;
+	std::vector<IBoundaryElement*> bound_elems;
+
+	for (size_t i = 0; i < Nelem; i++)
+	{
+		if (cell_types[i] == 1)
+		{
+			std::vector<double> t_vert = {vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2]};
+			IBoundaryElement* bound_elem = IBoundaryElement::Factory(t_vert, {cells[i][0]}, 0, 1); // !!! Затычка
+			bound_elems.push_back(bound_elem);
+		}
+		if (cell_types[i] == 3 && p_dim == 2)
+		{
+			std::vector<double> t_vert {
+				vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2],
+				vertices[cells[i][1] * 3  + 0], vertices[cells[i][1] * 3  + 1], vertices[cells[i][1] * 3  + 2]
+			};
+			IBoundaryElement* bound_elem = IBoundaryElement::Factory(t_vert, {cells[i][0], cells[i][1]}, 1, 1); // !!! Затычка
+			bound_elems.push_back(bound_elem);
+		} 
+		if (cell_types[i] == 5 && p_dim == 2)
+		{
+			std::vector<double> t_vert {
+				vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2],
+				vertices[cells[i][1] * 3  + 0], vertices[cells[i][1] * 3  + 1], vertices[cells[i][1] * 3  + 2],
+				vertices[cells[i][2] * 3  + 0], vertices[cells[i][2] * 3  + 1], vertices[cells[i][2] * 3  + 2]
+			};
+			IFiniteElement* felem = IFiniteElement::Factory(t_vert, {cells[i][0], cells[i][0], cells[i][1]}, 2);
+			elements.push_back(felem);
+		}	
+	}
+
+	FemGrid grid(3, vertices, elements, bound_elems);
+}
+
+TEST_CASE( "Tringle algorythm", "[AlgoTriangle]" )
+{
+	const std::string filename = "/home/vsevolod/University/Programing/С++/FEM/2dim/src/lib/tests/Rect.1.1mesh.1.vtk";
+	//FemGrid triang_test = Builder::BuildFromFile(filename);
+
+	size_t p_dim = 2;
+
+	VtkFEMParser parser(filename);
+
+	parser.load_mesh();
+
+	std::vector<double> vertices = parser.get_vertices();
+	std::vector<std::vector<size_t>> cells = parser.get_cells();
+	std::vector<size_t> cell_types = parser.get_cell_types();
+
+	size_t Nelem = parser.get_elements_number();
+	size_t Nvert = parser.get_vertices_number();
+
+	std::vector<IFiniteElement*> elements;
+	std::vector<IBoundaryElement*> bound_elems;
+
+	for (size_t i = 0; i < Nelem; i++)
+	{
+		if (cell_types[i] == 1)
+		{
+			std::vector<double> t_vert = {vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2]};
+			IBoundaryElement* bound_elem = IBoundaryElement::Factory(t_vert, {cells[i][0]}, 0, 1); // !!! Затычка
+			bound_elems.push_back(bound_elem);
+		}
+		if (cell_types[i] == 3 && p_dim == 2)
+		{
+			std::vector<double> t_vert {
+				vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2],
+				vertices[cells[i][1] * 3  + 0], vertices[cells[i][1] * 3  + 1], vertices[cells[i][1] * 3  + 2]
+			};
+			IBoundaryElement* bound_elem = IBoundaryElement::Factory(
+				t_vert, {cells[i][0], cells[i][1]}, 1, 1
+			); // !!! Затычка
+			bound_elems.push_back(bound_elem);
+		} 
+		if (cell_types[i] == 5 && p_dim == 2)
+		{
+			std::vector<double> t_vert {
+				vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2],
+				vertices[cells[i][1] * 3  + 0], vertices[cells[i][1] * 3  + 1], vertices[cells[i][1] * 3  + 2],
+				vertices[cells[i][2] * 3  + 0], vertices[cells[i][2] * 3  + 1], vertices[cells[i][2] * 3  + 2]
+			};
+			IFiniteElement* felem = IFiniteElement::Factory(
+				t_vert, {cells[i][0], cells[i][1], cells[i][2]}, 2
+			);
+			elements.push_back(felem);
+		}	
+	}
+
+	FemGrid grid(3, vertices, elements, bound_elems);
+
+	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::SSOR, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10, 1.975);
+	FemPDE fempde(&grid, f_fun, k_fun, params); 
+	fempde.assemble();
+
+	fempde.apply_boundary_condition_dirichlet_t(0, grid.boundary_element_indices(1));
+
+	std::vector<double> sol_test = fempde.solve();
+
+	grid.savevtk_t(sol_test, "test_triangle.vtk");
 }
 
 #undef __UNIT_TESTS__

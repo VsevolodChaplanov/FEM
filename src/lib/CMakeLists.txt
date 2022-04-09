@@ -12,6 +12,8 @@ set(LIB_CPPS pde_lib/Builder.cpp
 	pde_lib/VectorOperations.cpp
 	pde_lib/GlobalAssemblers.cpp
 	pde_lib/FiniteElemMeshParser.cpp
+	pde_lib/TriangleElem.cpp
+	pde_lib/LineBoundaryElement.cpp
 )
 
 set(HEADERS include/Builder.h
@@ -28,6 +30,8 @@ set(HEADERS include/Builder.h
 	include/VectorOperations.h
 	include/GlobalAssemblers.h
 	include/FiniteElemMeshParser.h
+	include/TriangleElem.h
+	include/LineBoundaryElement.h
 )
 
 set(FEM_PDE_lib fem_lib)

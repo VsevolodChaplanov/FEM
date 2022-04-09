@@ -65,6 +65,144 @@ const double* FemGrid::get_vertex(size_t i) const
 	return &vertices[i * dim];
 }
 
+void FemGrid::savevtk_t(const std::vector<double> &solution, const std::string &filename) const
+{
+	std::ofstream File;
+	File.open(filename);	
+
+	// --------- Header of vtk file ---------
+	// required version of vtk datafile
+	File << "# vtk DataFile Version 3.0" << std::endl; 
+	// name of the dataset
+	File << "Finite Elements Method" << std::endl;
+	// format of dataset
+	File << "ASCII" << std::endl;
+	// --------- Definition of the FEM type ---------
+	File << "DATASET UNSTRUCTURED_GRID" << std::endl;
+
+	// --------- Part to define finite elements mesh ---------
+	File << "POINTS " << vertices_number << " " << "double" << std::endl;
+	// --------- Vertices ---------
+	for (size_t i = 0; i < vertices_number; i++)
+	{
+		if (dim == 1)
+		{
+			File << vertices[dim * i] << " " << 0.0 << " " << 0.0 << std::endl;
+			continue;
+		}
+		if (dim == 2)
+		{
+			File << vertices[dim * i] << " " << vertices[dim * i + 1] << " " << 0.0 << std::endl;
+			continue;
+		}
+		for (size_t j = 0; j < dim; j++)
+		{
+			// looping through coordinate cus vertices store as {x0,y0,z0,x1,y1,z1,..}
+			File << vertices[dim * i + j] << " ";
+		}
+		File << std::endl;
+	}
+	// --------- Part to define cells ---------
+	File << "CELLS " << elements_number + boundary_elements.size() << " " << _cell_size_() << std::endl; 
+	// --------- Looping through global indices of vertices of the finite elements ---------
+	for (const IBoundaryElement* b_elem : boundary_elements)
+	{
+		File << b_elem->get_number_basis_func();
+		for(const size_t index : b_elem->get_global_indices())
+		{
+			File << " " << index;
+		}
+		File << std::endl;
+	}
+	for (size_t i = 0; i < elements_number; i++)
+	{
+		File << elements[i]->get_number_basis_func();
+		for (auto elem : elements[i]->get_global_indices())
+		{
+			File << " " << elem;
+		}
+		File << std::endl;
+	}
+
+	// -------- Looping through elements to define their type ---------
+	File << "CELL_TYPES " << elements_number + boundary_elements.size() << std::endl;
+	for (const IBoundaryElement* b_elem : boundary_elements)
+	{
+		if (b_elem->get_element_type() == 0)
+		{
+			File << 1 << std::endl;
+		} else if (b_elem->get_element_type() == 1)
+		{
+			File << 3 << std::endl;
+		}
+	}
+	
+	for (IFiniteElement* elem : elements)
+	{
+		if (elem->get_element_type() == 0)
+		{
+			File << 1 << std::endl;
+		} else if (elem->get_element_type() == 1)
+		{
+			File << 3 << std::endl;
+		} else if (elem->get_element_type() == 2)
+		{
+			File << 5 << std::endl;
+		}
+		
+	}
+
+	// -------- Part to store obtained numerical solution ---------
+	File << "POINT_DATA " << solution.size() << std::endl;
+	File << "SCALARS scalars double 1" << std::endl;
+	File << "LOOKUP_TABLE default" << std::endl;
+	for (auto& elem : solution)
+	{
+		File << elem << std::endl;
+	}
+
+	File.close();
+
+	std::cout << "Data has been stored in " << filename << std::endl;
+}
+
+
+size_t FemGrid::_cell_size_() const
+{
+	size_t full_cellssize = 0;
+	for (const IFiniteElement* elem : elements)
+	{
+		full_cellssize += (elem->get_number_basis_func()) + 1;
+	}
+	for (const IBoundaryElement* b_elem : boundary_elements)
+	{
+		full_cellssize += (b_elem->get_number_basis_func()) + 1;
+	}
+	return full_cellssize;
+}
+
+size_t FemGrid::get_elements_number() const
+{
+	return elements_number;
+}
+
+size_t FemGrid::get_vertices_number() const
+{
+	return vertices_number;
+}
+
+const IFiniteElement* FemGrid::get_element(size_t i) const
+{
+	return elements[i];
+}
+
+const IBoundaryElement* FemGrid::get_boundary_element(size_t i) const
+{
+	return boundary_elements[i];
+}
+
+FemGrid::~FemGrid() { }
+
 void FemGrid::savevtk(const std::vector<double> &solution, const std::string &filename) const
 {
 	std::ofstream File;
@@ -85,17 +223,7 @@ void FemGrid::savevtk(const std::vector<double> &solution, const std::string &fi
 	// --------- Vertices ---------
 	for (size_t i = 0; i < vertices_number; i++)
 	{
-		if (dim <= 1. + 1.e-8)
-		{
-			File << vertices[dim * i] << " " << 0.0 << " " << 0.0 << std::endl;
-			continue;
-		}
-		if (dim < 3 && dim > 1)
-		{
-			File << vertices[dim * i] << " " << vertices[dim * i + 1] << " " << 0.0 << std::endl;
-			continue;
-		}
-		for (size_t j = 0; j < dim; j++)
+		for (size_t j = 0; j < 3; j++)
 		{
 			// looping through coordinate cus vertices store as {x0,y0,z0,x1,y1,z1,..}
 			File << vertices[dim * i + j] << " ";
@@ -134,49 +262,4 @@ void FemGrid::savevtk(const std::vector<double> &solution, const std::string &fi
 
 	std::cout << "Data has been stored in " << filename << std::endl;
 }
-
-
-size_t FemGrid::_cell_size_() const
-{
-	size_t full_cellssize = 0;
-	for (IFiniteElement* elem : elements)
-	{
-		full_cellssize += (elem->get_number_basis_func()) + 1;
-	}
-	return full_cellssize;
-}
-
-size_t FemGrid::get_elements_number() const
-{
-	return elements_number;
-}
-
-size_t FemGrid::get_vertices_number() const
-{
-	return vertices_number;
-}
-
-// std::vector<IFiniteElement*>* FemGrid::get_elements() const
-// {
-// 	return &elements;
-// }
-
-// std::vector<IBoundaryElement*>* FemGrid::get_boundary_elements() const
-// {
-// 	return &boundary_elements;
-// }
-
-const IFiniteElement* FemGrid::get_element(size_t i) const
-{
-	return elements[i];
-}
-
-const IBoundaryElement* FemGrid::get_boundary_element(size_t i) const
-{
-	return boundary_elements[i];
-}
-
-FemGrid::~FemGrid() { }
-
-
 // #endif

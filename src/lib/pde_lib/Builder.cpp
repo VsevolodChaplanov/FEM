@@ -6,6 +6,7 @@
 #include "IBoundaryElem.h"
 #include "FemGrid.h"
 #include "LinElem.h"
+#include "FiniteElemMeshParser.h"
 
 
 FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
@@ -43,6 +44,21 @@ FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
 	// Making finite elements mesh
 	FemGrid grid(dim, vertices, elements, boundary_elements);
 	return grid;
+}
+
+FemGrid Builder::BuildFromFile(const std::string &filename)
+{
+	VtkFEMParser* parser = new VtkFEMParser(filename);
+
+	parser->load_mesh();
+
+	std::vector<double> vertices = parser->get_vertices();
+	std::vector<std::vector<size_t>> cells = parser->get_cells();
+	std::vector<size_t> cell_types = parser->get_cell_types();
+
+	delete parser;
+
+	throw std::runtime_error("No implemetation");
 }
 
 

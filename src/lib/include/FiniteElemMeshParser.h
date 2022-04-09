@@ -37,6 +37,11 @@ public:
 	IFEMParser(const std::string &filename);
 	static IFEMParser* Factory(const std::string &filename);
 	virtual void load_mesh() = 0;
+	const std::vector<double>& get_vertices() const;
+	const std::vector<size_t>& get_cell_types() const;
+	const std::vector<std::vector<size_t>>& get_cells() const;
+	size_t get_vertices_number() const;
+	size_t get_elements_number() const;
 	virtual ~IFEMParser();
 };
 
@@ -45,11 +50,11 @@ class VtkFEMParser : public IFEMParser
 {
 private:
 
-public:
-
 	#ifdef __UNIT_TESTS__
-	friend class vtk_p_Tester;
+		friend class vtk_p_Tester;
 	#endif
+
+public:
 
 	VtkFEMParser(const std::string &filename);
 	void load_mesh() override;

@@ -19,6 +19,31 @@ IFEMParser* IFEMParser::Factory(const std::string &filename)
 	throw std::runtime_error("This file format is not supported");
 }
 
+const std::vector<double>& IFEMParser::get_vertices() const
+{
+	return vertices;
+}
+
+const std::vector<std::vector<size_t>>& IFEMParser::get_cells() const
+{
+	return cells;
+}
+
+const std::vector<size_t>& IFEMParser::get_cell_types() const
+{
+	return cell_types;
+}
+
+size_t IFEMParser::get_elements_number() const
+{
+	return Nelem;
+}
+
+size_t IFEMParser::get_vertices_number() const
+{
+	return Nvert;
+}
+
 IFEMParser::IFEMParser(const std::string &filename) : filename(filename) { }
 
 IFEMParser::~IFEMParser() { }

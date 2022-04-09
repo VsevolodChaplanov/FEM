@@ -69,6 +69,16 @@ void FemPDE::apply_boundary_condition_dirichlet(double (*u_analytical)(const dou
 	}
 }
 
+void FemPDE::apply_boundary_condition_dirichlet_t(double u, const std::vector<size_t> &boundary_element_indices)
+{
+	for (const size_t index : boundary_element_indices)
+	{
+		lhs_g.SetZeroRow(index);
+		lhs_g.SetValue(index, index, 1);
+		rhs_g[index] = u;
+	}
+}
+
 std::vector<double> FemPDE::make_f_vec_vert()
 {
 	std::vector<double> f_vec(Nvert);

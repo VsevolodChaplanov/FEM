@@ -10,6 +10,7 @@
 #include "Builder.h"
 #include "IFiniteElem.h"
 #include "LinElem.h"
+#include "TriangleElem.h"
 #include "GlobalAssemblers.h"
 #include "VectorOperations.h"
 #include "CompressedM.h"

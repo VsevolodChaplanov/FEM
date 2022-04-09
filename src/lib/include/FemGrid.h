@@ -46,13 +46,6 @@ public:
 	size_t get_vertices_number() const;
 	// Returns massive of coordinates of the vertex with global index i
 	const double* get_vertex(size_t i) const;
-
-	// // Так и не смог понять почему есть ошибка в таком случае *тип возвращаемого значения не соответствует типу функции*
-	// // Returns pointer to container of finite elements
-	// std::vector<IFiniteElement*>* get_elements() const;
-	// // Returns pointer to container of boundary elements
-	// std::vector<IBoundaryElement*>* get_boundary_elements() const;
-
 	// Return pointer to finite element with index i
 	const IFiniteElement* get_element(size_t i) const;
 	// Return pointer to boundary element with index i
@@ -61,6 +54,7 @@ public:
 	double norm2(const std::vector<double> &difference) const;
 	// Save data as file of .vtk format
 	void savevtk(const std::vector<double> &, const std::string &) const;
+	void savevtk_t(const std::vector<double> &, const std::string &) const;
 	~FemGrid();
 
 private:

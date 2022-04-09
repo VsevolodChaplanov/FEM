@@ -47,6 +47,7 @@ public:
 	void new_assembler();
 	std::vector<double> solve() const;
 	void apply_boundary_condition_dirichlet(double (*u_analytical)(const double*), const std::vector<size_t> &boundary_element_indices);
+	void apply_boundary_condition_dirichlet_t(double u, const std::vector<size_t> &boundary_element_indices);
 
 private:
 

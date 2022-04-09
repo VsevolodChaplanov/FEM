@@ -5,6 +5,7 @@
 #include <array>
 #include <functional>
 #include <string>
+#include <cmath>
 
 // 0 - vertex
 // 1 - line
