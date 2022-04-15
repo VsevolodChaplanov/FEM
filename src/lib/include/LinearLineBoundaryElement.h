@@ -1,26 +1,24 @@
-#include "IBoundaryElem.h"
-#include "LinElem.h"
+#include "IBoundaryElement.h"
+#include "LinearLineElement.h"
 
-class LineBoundaryElement : public IBoundaryElement
+class LinearLineBoundaryElement : public IBoundaryElement
 {
 private:
 
 	// Bound type of the boundary element
 	size_t bound_type;
 	// Dimension
-	size_t dim = 2;
-	// Determinant of Jacobi matrix
-	double det_j;
+	size_t dim = 1;
 	// Volume of the linear elem
 	double volume;
 	// Reference point in physical space
-	std::vector<double> start_point;
+	const double* start_point;
 	// Coordinate of the center of the finite element
 	std::vector<double> center;
+	// Direction of the line
+	std::vector<double> direction;
 	// Massive of basis functions
 	std::array<std::function<double(const double*)>, 2> basis_functions;
-	// Jacobi
-	std::array<double, 2> J;
 	// Global indines of local vertexes
 	std::vector<size_t> global_indices; // Тут оставил вектор, чтобы вечно не гонять array -> vector -> array
 	// Local mass matrix
@@ -28,11 +26,13 @@ private:
 	// Local stiffness matrux
 	std::array<double, 4> stiffness_matrix;
 	// Lumped mass matrix of element
-	std::array<double, 4> lumped_mass_matrix; // В русской литературе "Вектор нагрузки"
+	std::array<double, 2> lumped_mass_matrix; // В русской литературе "Вектор нагрузки"
 
 public:
 
-	LineBoundaryElement(const std::vector<double> &vertices, 
+	LinearLineBoundaryElement(const std::vector<double> &vertices, 
+			const std::vector<size_t> &GIndices); 
+	LinearLineBoundaryElement(const std::vector<double> &vertices, 
 			const std::vector<size_t> &GIndices, 
 			size_t bound_type);
 	// Returns mass matrix element [i][j]
@@ -59,11 +59,11 @@ public:
 	size_t get_bound_type() const;
 
 	// Returns mass matrix element
-	const std::vector<double> get_mass_matrix() const override;
+	std::vector<double> get_mass_matrix() const override;
 	// Returns stiffness matrix element					
-	const std::vector<double> get_stiffness_matrix() const override;
+	std::vector<double> get_stiffness_matrix() const override;
 	// Returns lumpred mass matrix element
-	const std::vector<double> get_lumped_matrix() const override;
-	~LineBoundaryElement();
+	std::vector<double> get_lumped_matrix() const override;
+	~LinearLineBoundaryElement();
 };
 

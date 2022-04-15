@@ -2,10 +2,10 @@
 // #define __FINITE_ELEMENTS_MESH_BUILDER_CPP__
 
 #include "Builder.h"
-#include "IFiniteElem.h"
-#include "IBoundaryElem.h"
+#include "IFiniteElement.h"
+#include "IBoundaryElement.h"
 #include "FemGrid.h"
-#include "LinElem.h"
+#include "LinearLineElement.h"
 #include "FiniteElemMeshParser.h"
 
 
@@ -52,13 +52,55 @@ FemGrid Builder::BuildFromFile(const std::string &filename)
 
 	parser->load_mesh();
 
+	size_t p_dim = 2; // Dummy var
+
 	std::vector<double> vertices = parser->get_vertices();
 	std::vector<std::vector<size_t>> cells = parser->get_cells();
 	std::vector<size_t> cell_types = parser->get_cell_types();
 
+	size_t Nelem = parser->get_elements_number();
+	size_t Nvert = parser->get_vertices_number();
+
 	delete parser;
 
-	throw std::runtime_error("No implemetation");
+	std::vector<IBoundaryElement*> bound_elems;
+	std::vector<IFiniteElement*> elements;
+
+	for (size_t i = 0; i < Nelem; i++)
+	{
+		if (cell_types[i] == 1)
+		{
+			std::vector<double> t_vert = {vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2]};
+			IBoundaryElement* bound_elem = IBoundaryElement::Factory(t_vert, {cells[i][0]}, 0, 1); // !!! Затычка
+			bound_elems.push_back(bound_elem);
+		}
+		if (cell_types[i] == 3 && p_dim == 2)
+		{
+			std::vector<double> t_vert {
+				vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2],
+				vertices[cells[i][1] * 3  + 0], vertices[cells[i][1] * 3  + 1], vertices[cells[i][1] * 3  + 2]
+			};
+			IBoundaryElement* bound_elem = IBoundaryElement::Factory(
+				t_vert, {cells[i][0], cells[i][1]}, 1, 1
+			); // !!! Затычка
+			bound_elems.push_back(bound_elem);
+		} 
+		if (cell_types[i] == 5 && p_dim == 2)
+		{
+			std::vector<double> t_vert {
+				vertices[cells[i][0] * 3  + 0], vertices[cells[i][0] * 3  + 1], vertices[cells[i][0] * 3  + 2],
+				vertices[cells[i][1] * 3  + 0], vertices[cells[i][1] * 3  + 1], vertices[cells[i][1] * 3  + 2],
+				vertices[cells[i][2] * 3  + 0], vertices[cells[i][2] * 3  + 1], vertices[cells[i][2] * 3  + 2]
+			};
+			IFiniteElement* felem = IFiniteElement::Factory(
+				t_vert, {cells[i][0], cells[i][1], cells[i][2]}, 2
+			);
+			elements.push_back(felem);
+		}	
+	}
+
+	FemGrid grid(3, vertices, elements, bound_elems);
+	return grid;
 }
 
 

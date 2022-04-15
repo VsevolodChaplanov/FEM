@@ -1,7 +1,7 @@
 #ifndef __LINEAR_FINITE_ELEMS__
 #define __LINEAR_FINITE_ELEMS__
 
-#include "IFiniteElem.h"
+#include "IFiniteElement.h"
 
 // Строит элемент на двух вершинах
 // Хранит в себе
@@ -21,13 +21,13 @@
 // 			0 ------------ 1
 //
 //
-class LinElem : public IFiniteElement
+class LinearLineElement : public IFiniteElement
 {
 public:
 
 	// vertices a massive of two points [a,b] between which the finite element is constructed
 	// GIndices - global indices of points "a" and "b", they will have local indices 0 and 1 
-	LinElem(const std::vector<double> &vertices, const std::vector<std::size_t> &GIndices);
+	LinearLineElement(const std::vector<double> &vertices, const std::vector<size_t> &GIndices);
 	// Returns mass matrix element [i][j]
 	double get_mass(size_t i, size_t j) const override;
 	// Returns stiffness matrix element [i][j]						
@@ -48,14 +48,14 @@ public:
 	size_t get_element_type() const override;
 	// Get global indices
 	const std::vector<size_t>& get_global_indices() const override;
-	~LinElem();
+	~LinearLineElement();
 
 	// Returns mass matrix element
-	const std::vector<double> get_mass_matrix() const override;
+	std::vector<double> get_mass_matrix() const override;
 	// Returns stiffness matrix element					
-	const std::vector<double> get_stiffness_matrix() const override;
+	std::vector<double> get_stiffness_matrix() const override;
 	// Returns lumpred mass matrix element
-	const std::vector<double> get_lumped_matrix() const override;
+	std::vector<double> get_lumped_matrix() const override;
 	
 private: // Methods
 
@@ -65,16 +65,15 @@ private: // Methods
 	double phi2(const double* _param_point) const;
 
 private: // Properties
-	// Volume = length of the linear element
-	const double length;
-	// Determinant of Jacobi matrix
-	const double det_j;
+
+	// Dimension
+	size_t dim = 1; 
 	// Volume of the linear elem
 	const double volume;
 	// Reference point in physical space
-	double start_point;
+	const double* start_point;
 	// Coordinate of the center of the finite element
-	double center;
+	std::vector<double> center;
 	// Massive of basis functions
 	std::array<std::function<double(const double*)>, 2> basis_functions;
 	// Global indines of local vertexes
@@ -84,14 +83,7 @@ private: // Properties
 	// Local stiffness matrux
 	std::array<double, 4> stiffness_matrix;
 	// Lumped mass matrix of element
-	std::array<double, 4> lumped_mass_matrix; // В русской литературе "Вектор нагрузки"
+	std::array<double, 2> lumped_mass_matrix; // В русской литературе "Вектор нагрузки"
 };
-
-// // Dimension of finite element
-// const size_t dim;
-// // Number of basis functions
-// const size_t n_basis;
-// // Element type according to vtk format
-// const size_t element_type;
 
 #endif

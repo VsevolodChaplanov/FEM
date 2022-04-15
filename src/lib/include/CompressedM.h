@@ -15,7 +15,7 @@ class CMatrix
 private:
 	
 	// Число строк в матрице 
-	int N;
+	size_t N;
 
 	// Формал хранения отличных от 0 элементов матрицы в виде:
 	// { {{Coloumn, Value}, {Coloumn, Value}, ...}, 

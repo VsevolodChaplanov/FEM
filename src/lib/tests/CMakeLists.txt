@@ -1,28 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
-
-Include(FetchContent)
-
-FetchContent_Declare(
-	Catch2
-	GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-	GIT_TAG        v3.0.0-preview3
-)
-
-FetchContent_MakeAvailable(Catch2)
-
-set(SRC catch-tests.cpp
-	main-tests.cpp)
-set(HEADERS catch-tests.h)
+set(SRC PDE_lib_tests.cpp
+	MatVec_Math_tests.cpp
+	FiniteElements_tests.cpp
+	LocalMat_tests.cpp
+	GlobalMat_tests.cpp
+	MatrixSolvers_tests.cpp
+	FiniteElemMesh_tests.cpp
+	main.cpp)
+set(HEADERS PDE_lib_tests.h)
 
 set(LIB_TESTS fem_pde_lib-test)
 
 add_executable(${LIB_TESTS} ${SRC} ${HEADERS})
 
 target_link_libraries(${LIB_TESTS} PRIVATE ${FEM_PDE_lib})
-target_link_libraries(${LIB_TESTS} PRIVATE Catch2::Catch2)
+target_link_libraries(${LIB_TESTS} PRIVATE ${CATCH2_FRAMEWORK})
 target_include_directories(${LIB_TESTS} PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/include)
 link_directories(${catch2_SOURCE_DIR})
 
-include(CTest)
-list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-include(Catch)
+

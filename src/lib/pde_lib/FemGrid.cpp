@@ -2,16 +2,22 @@
 // #define __FINITELEMENTSGRID_CPP__
 
 #include "FemGrid.h"
-#include "IBoundaryElem.h"
-#include "LinElem.h"
+#include "IBoundaryElement.h"
+#include "LinearLineElement.h"
 
-FemGrid::FemGrid(size_t dim, const std::vector<double> &vertices, const std::vector<IFiniteElement*> &elements, const std::vector<IBoundaryElement*> &boundary_elements) : elements(elements),
+FemGrid::FemGrid(size_t dim, const std::vector<double> &vertices, const std::vector<IFiniteElement*> &elements, const std::vector<IBoundaryElement*> &boundary_elements) : 
 	vertices(vertices),
+	elements(elements),
 	boundary_elements(boundary_elements),
 	dim(dim),
 	vertices_number(vertices.size() / dim),
 	elements_number(elements.size()) 
-	{ }
+{ 
+	for (IFiniteElement* element : elements)
+	{
+		volume += element->get_volume();
+	}
+}
 
 std::vector<size_t> FemGrid::boundary_element_indices(size_t boundary_element_type) const
 {
@@ -30,12 +36,31 @@ std::vector<size_t> FemGrid::boundary_element_indices(size_t boundary_element_ty
 	return global_indices;
 }
 
+std::vector<size_t> FemGrid::boundary_element_indices(const std::function<bool(const double*)> seletor_func) const
+{
+	std::vector<size_t> global_indices;
+
+	for (const IBoundaryElement* b_elem : boundary_elements)
+	{
+		std::vector<size_t> indices = b_elem->get_global_indices();
+
+		for (const size_t index : indices)
+		{
+			if (seletor_func(&vertices[dim * index]))
+			{
+				global_indices.push_back(index);
+			}
+		}
+	}
+	return global_indices;
+}
+
 std::vector<double> FemGrid::approximate(std::function<double(const double*)> analytical_func) const
 {
-	std::vector<double> appr_an_func;
+	std::vector<double> appr_an_func(vertices_number);
 	for (size_t i = 0; i < vertices_number; i++)
 	{
-		appr_an_func.push_back(analytical_func(get_vertex(i)));
+		appr_an_func[i] = analytical_func(get_vertex(i));
 	}
 	return appr_an_func;
 }
@@ -43,11 +68,7 @@ std::vector<double> FemGrid::approximate(std::function<double(const double*)> an
 double FemGrid::norm2(const std::vector<double> &difference) const
 {
 	double sum = 0;
-	double Volume = 0;
-	for (IFiniteElement* element : elements)
-	{
-		Volume += element->get_volume();
-	}
+
 	
 	for (IFiniteElement* element : elements)
 	{
@@ -57,7 +78,7 @@ double FemGrid::norm2(const std::vector<double> &difference) const
 		}
 	}
 	// В формуле из pdf будто бы ошибка и там |D|_i -> если так то исправить добавлением в код коммента выше
-	return sqrt(sum);
+	return sqrt(sum / volume);
 }
 
 const double* FemGrid::get_vertex(size_t i) const
@@ -65,7 +86,7 @@ const double* FemGrid::get_vertex(size_t i) const
 	return &vertices[i * dim];
 }
 
-void FemGrid::savevtk_t(const std::vector<double> &solution, const std::string &filename) const
+void FemGrid::savevtk(const std::vector<double> &solution, const std::string &filename) const
 {
 	std::ofstream File;
 	File.open(filename);	
@@ -186,6 +207,11 @@ size_t FemGrid::get_elements_number() const
 	return elements_number;
 }
 
+size_t FemGrid::get_all_elements_number() const
+{
+	return elements_number + boundary_elements.size();
+}
+
 size_t FemGrid::get_vertices_number() const
 {
 	return vertices_number;
@@ -203,63 +229,3 @@ const IBoundaryElement* FemGrid::get_boundary_element(size_t i) const
 
 FemGrid::~FemGrid() { }
 
-void FemGrid::savevtk(const std::vector<double> &solution, const std::string &filename) const
-{
-	std::ofstream File;
-	File.open(filename);	
-
-	// --------- Header of vtk file ---------
-	// required version of vtk datafile
-	File << "# vtk DataFile Version 3.0" << std::endl; 
-	// name of the dataset
-	File << "Finite Elements Method" << std::endl;
-	// format of dataset
-	File << "ASCII" << std::endl;
-	// --------- Definition of the FEM type ---------
-	File << "DATASET UNSTRUCTURED_GRID" << std::endl;
-
-	// --------- Part to define finite elements mesh ---------
-	File << "POINTS " << vertices_number << " " << "double" << std::endl;
-	// --------- Vertices ---------
-	for (size_t i = 0; i < vertices_number; i++)
-	{
-		for (size_t j = 0; j < 3; j++)
-		{
-			// looping through coordinate cus vertices store as {x0,y0,z0,x1,y1,z1,..}
-			File << vertices[dim * i + j] << " ";
-		}
-		File << std::endl;
-	}
-	// --------- Part to define cells ---------
-	File << "CELLS " << elements_number << " " << _cell_size_() << std::endl; 
-	// --------- Looping through global indices of vertices of the finite elements ---------
-	for (size_t i = 0; i < elements_number; i++)
-	{
-		File << elements[i]->get_number_basis_func();
-		for (auto elem : elements[i]->get_global_indices())
-		{
-			File << " " << elem;
-		}
-		File << std::endl;
-	}
-	// -------- Looping through elements to define their type ---------
-	File << "CELL_TYPES " << elements_number << std::endl;
-	for (IFiniteElement* elem : elements)
-	{
-		File << elem->get_element_type() << std::endl;
-	}
-
-	// -------- Part to store obtained numerical solution ---------
-	File << "POINT_DATA " << solution.size() << std::endl;
-	File << "SCALARS scalars double 1" << std::endl;
-	File << "LOOKUP_TABLE default" << std::endl;
-	for (auto& elem : solution)
-	{
-		File << elem << std::endl;
-	}
-
-	File.close();
-
-	std::cout << "Data has been stored in " << filename << std::endl;
-}
-// #endif

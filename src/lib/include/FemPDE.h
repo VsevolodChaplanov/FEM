@@ -4,8 +4,8 @@
 #include <functional>
 #include <string>
 #include "Builder.h"
-#include "IBoundaryElem.h"
-#include "IFiniteElem.h"
+#include "IBoundaryElement.h"
+#include "IFiniteElement.h"
 #include "CompressedM.h"
 #include "Solvers.h"
 #include "GlobalAssemblers.h"
@@ -18,7 +18,7 @@ class FemPDE
 private:
 
 	// 
-	FemGrid* fin_elem_mesh;
+	const FemGrid* fin_elem_mesh;
 
 	std::function<double(const double*)> f_func;
 	std::function<double(const double*)> k_func;
@@ -29,12 +29,6 @@ private:
 	const size_t Nelem;
 	const size_t Nvert;
 
-	// @kalininei Может быть их создать на этапе сборки?
-	// Global mass matrix
-	// CMatrix M_g;
-	// // Global stiffness matrix
-	// CMatrix S_g;
-
 	// lhs_g = (M_g + S_g)
 	CMatrix lhs_g;
 	// rhs_g = M * f_vector
@@ -42,16 +36,18 @@ private:
 	
 public:
 
-	FemPDE(FemGrid* finite_element_mesh, double (*f_analytical)(const double*), double (*k_analytical)(const double*), const MatrixSolverParams* parameters);
+	FemPDE(const FemGrid* finite_element_mesh,
+			double (*f_analytical)(const double*),
+			double (*k_analytical)(const double*),
+			const MatrixSolverParams* parameters);
 	void assemble();
-	void new_assembler();
 	std::vector<double> solve() const;
 	void apply_boundary_condition_dirichlet(double (*u_analytical)(const double*), const std::vector<size_t> &boundary_element_indices);
-	void apply_boundary_condition_dirichlet_t(double u, const std::vector<size_t> &boundary_element_indices);
+	void apply_boundary_condition_dirichlet(double u, const std::vector<size_t> &boundary_element_indices);
+	~FemPDE();
 
 private:
 
-	std::vector<double> make_f_vec_vert();
 	std::vector<double> make_k_vec_center();
 };
 

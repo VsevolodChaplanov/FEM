@@ -4,10 +4,10 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
-#include "IFiniteElem.h"
-#include "IBoundaryElem.h"
-#include "LinElem.h"
-#include "PointBoundElem.h"
+#include "IFiniteElement.h"
+#include "IBoundaryElement.h"
+#include "LinearLineElement.h"
+#include "LinearPointBoundaryElement.h"
 
 class FemGrid
 {
@@ -27,6 +27,8 @@ private:
 	const size_t vertices_number;
 	// Number of all elements in fin. elment grid
 	const size_t elements_number;
+	// Volume of the claculation area
+	double volume = 0;
 
 public:
 
@@ -38,10 +40,14 @@ public:
 	FemGrid(size_t dim, const std::vector<double> &vertices, const std::vector<IFiniteElement*> &elements, const std::vector<IBoundaryElement*> &boundary_elements);
 	// Return vector of indices of boundary elements of the specified type
 	std::vector<size_t> boundary_element_indices(size_t boundary_element_type) const;
+	// Return vector of indices of boundary elements of the specified type
+	std::vector<size_t> boundary_element_indices(const std::function<bool(const double*)>) const;
 	// Approximate analytical function along mesh
 	std::vector<double> approximate(std::function<double(const double*)>) const;
 	// Returns number of finite elements in f.el.mesh
 	size_t get_elements_number() const;
+	// Return number of boundary element plus number of elements
+	size_t get_all_elements_number() const;
 	// Returns number of vertices in f.el.mesh
 	size_t get_vertices_number() const;
 	// Returns massive of coordinates of the vertex with global index i
@@ -54,7 +60,6 @@ public:
 	double norm2(const std::vector<double> &difference) const;
 	// Save data as file of .vtk format
 	void savevtk(const std::vector<double> &, const std::string &) const;
-	void savevtk_t(const std::vector<double> &, const std::string &) const;
 	~FemGrid();
 
 private:

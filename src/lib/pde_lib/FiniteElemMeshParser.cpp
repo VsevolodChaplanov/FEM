@@ -44,6 +44,7 @@ size_t IFEMParser::get_vertices_number() const
 	return Nvert;
 }
 
+
 IFEMParser::IFEMParser(const std::string &filename) : filename(filename) { }
 
 IFEMParser::~IFEMParser() { }
@@ -59,6 +60,11 @@ void VtkFEMParser::load_mesh()
 	boost::char_separator<char> sep {" "};
 
 	size_t k = 0;
+	if (!file.is_open())
+	{
+		throw std::runtime_error("Can't open file " + filename);
+	}
+	
 	while (getline(file, line))
 	{
 		boost::tokenizer<boost::char_separator<char>> tok(line, sep);
@@ -104,36 +110,8 @@ void VtkFEMParser::load_mesh()
 
 	Nvert = vertices.size() / 3;
 	Nelem = cells.size();
+
+	file.close();
 }
 
 VtkFEMParser::~VtkFEMParser() { }
-
-
-
-vtk_p_Tester::vtk_p_Tester(const std::string &filename) : VtkFEMParser(filename) { }
-vtk_p_Tester::~vtk_p_Tester() { }
-
-const std::vector<double>& vtk_p_Tester::get_vertices() const
-{
-	return vertices;
-}
-
-const std::vector<std::vector<size_t>>& vtk_p_Tester::get_cells() const
-{
-	return cells;
-}
-
-const std::vector<size_t>& vtk_p_Tester::get_cell_types() const
-{
-	return cell_types;
-}
-
-size_t vtk_p_Tester::get_vertices_number() const
-{
-	return Nvert;
-}
-
-size_t vtk_p_Tester::get_elements_number() const
-{
-	return Nelem;
-}

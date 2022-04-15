@@ -1,7 +1,7 @@
 #ifndef __INTERFACE_BOUNDARY_ELEMS__
 #define __INTERFACE_BOUNDARY_ELEMS__
 
-#include "IFiniteElem.h"
+#include "IFiniteElement.h"
 
 class IBoundaryElement : public IFiniteElement
 {

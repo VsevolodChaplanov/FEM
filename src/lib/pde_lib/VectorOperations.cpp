@@ -122,4 +122,85 @@ void summ_cm(const CMatrix &A, const CMatrix &B, CMatrix &Lhs)
 	}
 }
 
+bool compare_vectors(const std::vector<double> &first, const std::vector<double> &second)
+{
+    if (first.size() != second.size())
+    {
+        return false;
+    }
+    
+    for (size_t i = 0; i < first.size(); i++)
+    {
+        if (first[i] != second[i])
+        {
+            return false;
+        }
+        
+    }
+
+    return true;
+}
+
+bool compare_vectors(const std::vector<size_t> &first, const std::vector<size_t> &second)
+{
+    if (first.size() != second.size())
+    {
+        return false;
+    }
+    
+    for (size_t i = 0; i < first.size(); i++)
+    {
+        if (first[i] != second[i])
+        {
+            return false;
+        }
+        
+    }
+    
+    return true;
+}
+
+double vector_lenght(const std::vector<double> &coordinates)
+{
+    double lenght = 0;
+    if (coordinates.size() == 6)
+    {
+        lenght = sqrt((coordinates[3] - coordinates[0]) * (coordinates[3] - coordinates[0]) +
+            (coordinates[4] - coordinates[1]) * (coordinates[4] - coordinates[1]) +
+            (coordinates[5] - coordinates[2]) * (coordinates[5] - coordinates[2])
+        );
+    } else if (coordinates.size() == 4)
+    {
+        lenght = sqrt((coordinates[2] - coordinates[0]) * (coordinates[2] - coordinates[0]) +
+            (coordinates[3] - coordinates[1]) * (coordinates[3] - coordinates[1]));
+    } else if (coordinates.size() == 2)
+    {
+        lenght = (fabs(coordinates[1] - coordinates[0]));
+    }
+    
+    return lenght;   
+}
+
+std::vector<double> centre_vector(const std::vector<double> &coordinates)
+{
+    size_t N = coordinates.size();
+    std::vector<double> result;
+    if (N == 6)
+    {
+        result = { (coordinates[0] + coordinates[3]) / 2,
+            (coordinates[1] + coordinates[4]) / 2,
+            (coordinates[2] + coordinates[5]) / 2
+        };
+    } else if (N == 4)
+    {
+        result = { (coordinates[0] + coordinates[2]) / 2,
+            (coordinates[1] + coordinates[3]) / 2
+        };
+    } else if (N == 2)
+    {
+        result = {(coordinates[0] + coordinates[1]) / 2};
+    }
+    return result;
+}
+
 // #endif

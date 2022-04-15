@@ -6,6 +6,7 @@
 #include <functional>
 #include <string>
 #include <cmath>
+#include "VectorOperations.h"
 
 // 0 - vertex
 // 1 - line
@@ -15,7 +16,17 @@
 class IFiniteElement
 {
 public:
+
+	// enum Elements {
+	// 	Line,
+	// 	Triangle
+	// };
 	
+	// enum BoundaryElements {
+	// 	Point,
+	// 	Line
+	// };
+
 	static IFiniteElement* Factory(const std::vector<double> &vertices, const std::vector<std::size_t> &GIndices, size_t element_type); 
 	// Returns mass matrix element with local indices [i,j]
 	virtual double get_mass(size_t i, size_t j) const = 0; 
@@ -41,12 +52,12 @@ public:
 	virtual const std::vector<size_t>& get_global_indices() const = 0;
 	virtual ~IFiniteElement();
 
-		// Returns mass matrix element
-	virtual const std::vector<double> get_mass_matrix() const = 0;
+	// Returns mass matrix element
+	virtual std::vector<double> get_mass_matrix() const = 0;
 	// Returns stiffness matrix element					
-	virtual const std::vector<double> get_stiffness_matrix() const = 0;
+	virtual std::vector<double> get_stiffness_matrix() const = 0;
 	// Returns lumpred mass matrix element
-	virtual const std::vector<double> get_lumped_matrix() const = 0;
+	virtual std::vector<double> get_lumped_matrix() const = 0;
 };
 
 

@@ -21,6 +21,7 @@ public:
 	static IMatrixSolver* Factory(const MatrixSolverParams* parameters);
 	IMatrixSolver(const MatrixSolverParams* parameters);
 	virtual void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) = 0;
+	virtual ~IMatrixSolver();
 };
 /*-----------------------------Solvers Interface-----------------------------*/
 

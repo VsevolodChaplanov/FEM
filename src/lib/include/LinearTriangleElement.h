@@ -1,9 +1,9 @@
 #ifndef __TRIANGLE_FINITE_ELEMENT__
 #define __TRIANGLE_FINITE_ELEMENT__
 
-#include "IFiniteElem.h"
+#include "IFiniteElement.h"
 
-class TriangleElem : public IFiniteElement
+class LinearTriangleElement : public IFiniteElement
 {
 private:
 
@@ -15,7 +15,7 @@ public:
 	
 	// gets: 3 vertives as {x0, y0, x1, y1, x2, y2}
 	// 	3 global indices of this vertices
-	TriangleElem(const std::vector<double> &vertices, const std::vector<size_t> &GIndices);
+	LinearTriangleElement(const std::vector<double> &vertices, const std::vector<size_t> &GIndices);
 	// Returns mass matrix element [i][j]
 	double get_mass(size_t i, size_t j) const override;
 	// Returns stiffness matrix element [i][j]						
@@ -36,14 +36,14 @@ public:
 	size_t get_element_type() const override;
 	// Get global indices
 	const std::vector<size_t>& get_global_indices() const override;
-	~TriangleElem();
+	~LinearTriangleElement();
 
 	// Returns mass matrix element
-	const std::vector<double> get_mass_matrix() const override;
+	std::vector<double> get_mass_matrix() const override;
 	// Returns stiffness matrix element					
-	const std::vector<double> get_stiffness_matrix() const override;
+	std::vector<double> get_stiffness_matrix() const override;
 	// Returns lumpred mass matrix element
-	const std::vector<double> get_lumped_matrix() const override;
+	std::vector<double> get_lumped_matrix() const override;
 
 private:
 

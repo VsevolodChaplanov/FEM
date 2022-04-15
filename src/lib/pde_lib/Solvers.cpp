@@ -65,6 +65,8 @@ IMatrixSolver::IMatrixSolver(const MatrixSolverParams* parameters)
 	this->parameters = parameters;
 }
 
+IMatrixSolver::~IMatrixSolver() { }
+
 void CG_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u)
 {
 	double start_time = clock();
@@ -550,7 +552,6 @@ void LDU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::
 void CG_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
 {
 	double start_time = clock();
-	size_t N = Lhs.size();
 	std::vector<double> w;
 	std::vector<double> r = vector_diff(Lhs * u, Rhs);
 	std::vector<double> p = r;
