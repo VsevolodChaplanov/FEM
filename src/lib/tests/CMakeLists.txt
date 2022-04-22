@@ -13,9 +13,6 @@ set(LIB_TESTS fem_pde_lib-test)
 
 add_executable(${LIB_TESTS} ${SRC} ${HEADERS})
 
-target_link_libraries(${LIB_TESTS} PRIVATE ${FEM_PDE_lib})
-target_link_libraries(${LIB_TESTS} PRIVATE ${CATCH2_FRAMEWORK})
+target_link_libraries(${LIB_TESTS} PRIVATE ${FEM_PDE_lib} ${CATCH2_FRAMEWORK})
 target_include_directories(${LIB_TESTS} PRIVATE ${CMAKE_SOURCE_DIR}/src/lib/include)
-link_directories(${catch2_SOURCE_DIR})
-
 
