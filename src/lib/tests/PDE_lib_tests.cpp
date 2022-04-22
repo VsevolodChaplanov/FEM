@@ -4,6 +4,7 @@
 
 // Tests of full solution
 //		1D linear solution
+// 		2D solution (triangulated area)
 // 		Approx degree
 
 double u_ex(const double* point)
@@ -19,6 +20,17 @@ double f_fun(const double* point)
 double k_fun(const double* point)
 {
 	return 1.0 / (18 * 18 * (point[0] + 0.2));
+}
+
+bool selector_left_bound(const double* point)
+{
+	return (point[0] == 0) ? true : false;
+}
+
+
+bool selector_right_bound(const double* point)
+{
+	return (point[0] == 1) ? true : false;
 }
 
 // -------------------- Full solution check ------------------
@@ -61,6 +73,44 @@ TEST_CASE( "Check 1D linear solution", "[1D solution]" )
 	}
 	// ------------------- Component-component comparing ------------------- //
 
+}
+
+TEST_CASE( "Check 2D algorythm", "[2DSolution]" )
+{
+	FemGrid triang_grid_ex = Builder::BuildFromFile("./test_resources/triangle_1000.vtk");
+	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::SSOR, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10, 1.975);
+	FemPDE fem_pde_ex(&triang_grid_ex, f_fun, k_fun, params);
+
+	double* left_side = new double[0, 0, 0];
+	double* right_side = new double[1, 0, 0];
+
+	fem_pde_ex.assemble();
+	fem_pde_ex.apply_boundary_condition_dirichlet(u_ex(left_side), 
+		triang_grid_ex.boundary_element_indices(selector_left_bound));
+	fem_pde_ex.apply_boundary_condition_dirichlet(u_ex(right_side), 
+		triang_grid_ex.boundary_element_indices(selector_right_bound));
+
+	std::vector<double> solution_ex = fem_pde_ex.solve();
+
+	// -------------------- Solution elements check -------------------- //
+	CHECK( solution_ex[0] == 0.352274 );
+	CHECK( solution_ex[1] == 0.352274 );
+	CHECK( solution_ex[2] == 0.352274 );
+	CHECK( solution_ex[3] == 0.352274 );
+
+	CHECK( solution_ex[157] == 0.77174501573231813 );
+	CHECK( solution_ex[158] == 0.81809928540064825 );
+	CHECK( solution_ex[159] == -0.14075087884627888 );
+	CHECK( solution_ex[160] == 0.39924632524794973 );
+
+	CHECK( solution_ex[297] == 0.38774212260081836 );
+	CHECK( solution_ex[298] == -0.49035029653729573 );
+	CHECK( solution_ex[299] == 0.96605592563877729 );
+	CHECK( solution_ex[300] == -0.687281 );
+	// -------------------- Solution elements check -------------------- //
+	
+	triang_grid_ex.savevtk(solution_ex, "TestCaseTriangleSolution.vtk");
+	delete params;
 }
 
 // ------------------- Approximation degree test ---------------------

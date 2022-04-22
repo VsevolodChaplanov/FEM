@@ -46,7 +46,6 @@ int main(int argc, char const *argv[])
 	std::cout << "Maximun absolute diviation: " << normmax << std::endl;
 	std::cout << "Second norm: " << norm2 << std::endl;
 	std::cout << "Second norm within approximation: " << norm2a << std::endl;
-
 	delete params;
 	return 0;
 }

@@ -40,10 +40,22 @@ IMatrixSolver* IMatrixSolver::Factory(const MatrixSolverParams* parameters)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new GD_Solver(parameters));
 		return new GD_Solver(parameters);
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::GD && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
+	{
+		// std::shared_ptr<IMatrixSolver> solver(new GD_Solver(parameters));
+		return new GD_Solver(parameters);
 	} else if (parameters->solve_method == MatrixSolverParams::Methods::CG && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
 	{
 		// std::shared_ptr<IMatrixSolver> solver(new CG_Solver(parameters));
 		return new CG_Solver(parameters);
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::LU && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
+	{
+		// std::shared_ptr<IMatrixSolver> solver(new GD_Solver(parameters));
+		return new LU_Solver(parameters);
+	} else if (parameters->solve_method == MatrixSolverParams::Methods::LDU && parameters->precondition_method == MatrixSolverParams::Preconditioners::None)
+	{
+		// std::shared_ptr<IMatrixSolver> solver(new GD_Solver(parameters));
+		return new LDU_Solver(parameters);
 	} else if (parameters->precondition_method != MatrixSolverParams::Preconditioners::None)
 	{
 		//std::shared_ptr<IPreconditioner> preconditioner = IPreconditioner::Factory(parameters);
@@ -57,7 +69,17 @@ IMatrixSolver* IMatrixSolver::Factory(const MatrixSolverParams* parameters)
 			return new GD_Solver_P(parameters, IPreconditioner::Factory(parameters));
 		}
 	}
-	return nullptr;
+	throw std::runtime_error("No implementations for this method");
+}
+
+double IMatrixSolver::get_required_time() const
+{
+	return required_time;
+}
+
+size_t IMatrixSolver::get_iterations_number() const
+{
+	return num_iterations;
 }
 
 IMatrixSolver::IMatrixSolver(const MatrixSolverParams* parameters)
@@ -229,10 +251,10 @@ void SSOR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std:
 			R.push_back(res);
 		}
 
-		if (res< parameters->eps)
+		if (res < parameters->eps)
 		{
-			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
+			num_iterations = k;
 			write_in_file(R, "Residuals");
 			break;
 		}		
@@ -278,8 +300,8 @@ void SOR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::
 
 		if (res < parameters->eps)
 		{
-			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
+			num_iterations = k;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 			write_in_file(R, "Residuals");
 			break;
 		}
@@ -312,7 +334,8 @@ void Thomas_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, st
 	{
 		u[i-1] = P[i-1] * (u[i]) + Q[i-1];
 	}
-	std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
+
+	required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 }
 
 bool Thomas_Solver::CheckTridiagonal(const CMatrix& Lhs)
@@ -364,8 +387,8 @@ void Jacobi_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, st
 
 		if (res < parameters->eps)
 		{
-			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
+			num_iterations = k;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 			write_in_file(R, "Residuals");
 			break;
 		}
@@ -410,8 +433,8 @@ void Seidel_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, st
 
 		if (res < parameters->eps)
 		{
-			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
+			num_iterations = k;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 			write_in_file(R, "Residuals");
 			break;
 		}

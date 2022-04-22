@@ -32,9 +32,16 @@ bool check_matrix_sym(CMatrix &Matrix);
 
 void summ_cm(const CMatrix &A, const CMatrix &B, CMatrix &Lhs);
 
-bool compare_vectors(const std::vector<double> &first, const std::vector<double> &second);
-bool compare_vectors(const std::vector<size_t> &first, const std::vector<size_t> &second);
+// bool compare_vectors(const std::vector<double> &first, const std::vector<double> &second);
+// bool compare_vectors(const std::vector<size_t> &first, const std::vector<size_t> &second);
 double vector_lenght(const std::vector<double> &coordinates);
+
 std::vector<double> centre_vector(const std::vector<double> &coordinates);
+
+template<typename T>
+bool compare_vectors(const std::vector<T> &first, const std::vector<T> &second);
+
+// template<> bool compare_vectors<size_t>(const std::vector<size_t>&, const std::vector<size_t>&);
+// template<> bool compare_vectors<double>(const std::vector<double>&, const std::vector<double>&);
 
 #endif

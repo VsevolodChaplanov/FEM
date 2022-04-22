@@ -6,6 +6,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+add_compile_options(-Wall)
+
 add_subdirectory("src/")
 
 # add_custom_target(test_resources)
@@ -15,4 +17,4 @@ add_subdirectory("src/")
 #                 ${CMAKE_CURRENT_BINARY_DIR}/test_resources
 #                 ${CMAKE_SOURCE_DIR})
 
-file(INSTALL ./test_resources DESTINATION ${CMAKE_BINARY_DIR}/bin/test_resources)
+file(INSTALL ./test_resources DESTINATION ${CMAKE_BINARY_DIR}/bin)

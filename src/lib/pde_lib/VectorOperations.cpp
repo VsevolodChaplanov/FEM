@@ -99,7 +99,7 @@ bool check_matrix_sym(CMatrix &Matrix)
         {
             if (elem.second != Matrix.GetValue(elem.first, i))
             {
-                result = false;
+                return false;
             }
         }
     }
@@ -122,43 +122,43 @@ void summ_cm(const CMatrix &A, const CMatrix &B, CMatrix &Lhs)
 	}
 }
 
-bool compare_vectors(const std::vector<double> &first, const std::vector<double> &second)
-{
-    if (first.size() != second.size())
-    {
-        return false;
-    }
+// bool compare_vectors(const std::vector<double> &first, const std::vector<double> &second)
+// {
+//     if (first.size() != second.size())
+//     {
+//         return false;
+//     }
     
-    for (size_t i = 0; i < first.size(); i++)
-    {
-        if (first[i] != second[i])
-        {
-            return false;
-        }
+//     for (size_t i = 0; i < first.size(); i++)
+//     {
+//         if (first[i] != second[i])
+//         {
+//             return false;
+//         }
         
-    }
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
-bool compare_vectors(const std::vector<size_t> &first, const std::vector<size_t> &second)
-{
-    if (first.size() != second.size())
-    {
-        return false;
-    }
+// bool compare_vectors(const std::vector<size_t> &first, const std::vector<size_t> &second)
+// {
+//     if (first.size() != second.size())
+//     {
+//         return false;
+//     }
     
-    for (size_t i = 0; i < first.size(); i++)
-    {
-        if (first[i] != second[i])
-        {
-            return false;
-        }
+//     for (size_t i = 0; i < first.size(); i++)
+//     {
+//         if (first[i] != second[i])
+//         {
+//             return false;
+//         }
         
-    }
+//     }
     
-    return true;
-}
+//     return true;
+// }
 
 double vector_lenght(const std::vector<double> &coordinates)
 {
@@ -201,6 +201,62 @@ std::vector<double> centre_vector(const std::vector<double> &coordinates)
         result = {(coordinates[0] + coordinates[1]) / 2};
     }
     return result;
+}
+
+template<typename T>
+bool compare_vectors(const std::vector<T> &first, const std::vector<T> &second)
+{
+    if (first.size() != second.size())
+    {
+        return false;
+    }
+    
+    for (size_t i = 0; i < first.size(); i++)
+    {
+        if (first[i] != second[i])
+        {
+            return false;
+        }    
+    }
+    
+    return true;
+}
+
+
+template<> bool compare_vectors<size_t>(const std::vector<size_t>& first, const std::vector<size_t>& second)
+{
+    if (first.size() != second.size())
+    {
+        return false;
+    }
+    
+    for (size_t i = 0; i < first.size(); i++)
+    {
+        if (first[i] != second[i])
+        {
+            return false;
+        }    
+    }
+    
+    return true;
+}
+
+template<> bool compare_vectors<double>(const std::vector<double>& first, const std::vector<double>& second)
+{
+    if (first.size() != second.size())
+    {
+        return false;
+    }
+    
+    for (size_t i = 0; i < first.size(); i++)
+    {
+        if (first[i] != second[i])
+        {
+            return false;
+        }    
+    }
+    
+    return true;
 }
 
 // #endif

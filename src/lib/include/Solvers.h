@@ -13,14 +13,22 @@ class IMatrixSolver
 {
 protected:
 
+	// Solver parameters
 	const MatrixSolverParams* parameters;
+	// Residuals storage
 	std::vector<double> R;
+	// Required time for solution (in s)
+	double required_time;
+	// Number of iterations required
+	size_t num_iterations = 0;
 
 public:
 
 	static IMatrixSolver* Factory(const MatrixSolverParams* parameters);
 	IMatrixSolver(const MatrixSolverParams* parameters);
 	virtual void solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::vector<double>& u) = 0;
+	double get_required_time() const;
+	size_t get_iterations_number() const;
 	virtual ~IMatrixSolver();
 };
 /*-----------------------------Solvers Interface-----------------------------*/

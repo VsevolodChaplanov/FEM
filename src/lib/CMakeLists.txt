@@ -41,6 +41,5 @@ add_library(${FEM_PDE_lib} SHARED ${LIB_CPPS} ${HEADERS})
 target_include_directories(${FEM_PDE_lib} PRIVATE include)
 target_include_directories(${FEM_PDE_lib} PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(${FEM_PDE_lib} PRIVATE ${Boost_LIBARARIES})
-target_compile_options(${FEM_PDE_lib} PRIVATE -Wall)
 
 add_subdirectory(tests)

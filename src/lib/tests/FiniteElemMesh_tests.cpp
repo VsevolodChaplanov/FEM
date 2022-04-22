@@ -215,7 +215,7 @@ TEST_CASE( "Finite lements mesh builder from file .vtk", "[BuildAlgoTest]" )
 	// --------------- Point bound check --------------- //
 	const IBoundaryElement* belem_test_p = grid_test.get_boundary_element(0);
 	CHECK(
-		compare_vectors(belem_test_p->get_global_indices(), {0})
+		compare_vectors<size_t>(belem_test_p->get_global_indices(), {0})
 	);
 	CHECK(
 		belem_test_p->get_element_type() == 0
@@ -226,7 +226,7 @@ TEST_CASE( "Finite lements mesh builder from file .vtk", "[BuildAlgoTest]" )
 	// --------------- Line bound check --------------- //
 	const IBoundaryElement* belem_test_l = grid_test.get_boundary_element(4);
 	CHECK(
-		compare_vectors(belem_test_l->get_global_indices(), {0,4})
+		compare_vectors<size_t>(belem_test_l->get_global_indices(), {0,4})
 	);
 	CHECK(
 		belem_test_l->get_element_type() == 1
