@@ -22,7 +22,7 @@ FemGrid Builder::BuildLinear1DGrid(double left, double right, size_t N)
 	size_t dim = 1;
 
 	// Fill vertices vector by uniform grid vertices
-	double h = (right - left) / (double) N;
+	double h = (right - left) / static_cast<double> (N);
 	vertices[0] = left;
 	for (size_t i = 1; i < N + 1; i++)
 	{

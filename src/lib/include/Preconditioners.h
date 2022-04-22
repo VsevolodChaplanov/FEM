@@ -17,6 +17,7 @@ public:
 	IPreconditioner(const MatrixSolverParams* parameters);
 	virtual std::vector<double> Precondition(const CMatrix& Lhs, const std::vector<double>& Rhs) = 0;
 	static IPreconditioner* Factory(const MatrixSolverParams* params);
+	virtual ~IPreconditioner() = default;
 };
 
 class Jacobi_P : public IPreconditioner

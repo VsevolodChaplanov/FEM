@@ -6,7 +6,26 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_compile_options(-Wall)
+add_compile_options(
+    # -Werror
+
+    -Wall
+    -Wextra
+    -Wpedantic
+
+    # -Wcast-align
+    # -Wcast-qual
+    # -Wconversion
+    # -Wctor-dtor-privacy
+    # -Wenum-compare
+    # # -Wfloat-equal
+    # -Wnon-virtual-dtor
+    # -Wold-style-cast
+    # -Woverloaded-virtual
+    # -Wredundant-decls
+    # -Wsign-conversion
+    # -Wsign-promo
+)
 
 add_subdirectory("src/")
 

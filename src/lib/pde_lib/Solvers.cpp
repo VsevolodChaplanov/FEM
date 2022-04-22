@@ -122,9 +122,8 @@ void CG_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::v
 		}
 		if(sqrt(Norm) < parameters->eps * parameters->eps)
 		{
-			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
-			std::cout << "Норма невязки: " << sqrt(Norm) << std::endl;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
+			num_iterations = k;
 			write_in_file(R, "Residuals");	
 			break;
 		}
@@ -153,8 +152,8 @@ void GD_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::v
 		// Условие выхода из цикла
 		if(sqrt(Norm) < (parameters->eps))
 		{
-			std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-			std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << " секунд" << std::endl;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
+			num_iterations = k;
 			write_in_file(R, "Residuals");
 			break;
 		}
@@ -185,8 +184,8 @@ void MR_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, std::v
 
         if(Norm < parameters->eps)
         {
-            std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-            std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
+            required_time = (clock() - start_time) / CLOCKS_PER_SEC;
+			num_iterations = k;
 			write_in_file(R, "Residuals");	
             break;
         }
@@ -334,7 +333,6 @@ void Thomas_Solver::solve(const CMatrix& Lhs, const std::vector<double>& Rhs, st
 	{
 		u[i-1] = P[i-1] * (u[i]) + Q[i-1];
 	}
-
 	required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 }
 
@@ -472,7 +470,7 @@ void LU_Solver::LU_decomposition(const CMatrix &Lhs, CMatrix &L)
 			}
 		}
 	}
-	std::cout << "Процедура LU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
+	required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 }
 
 void LU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
@@ -507,9 +505,7 @@ void LU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::v
 		u[i-1] = 1 / L.GetValue(i-1,i-1) * (y[i-1] - Sum);
 		//x[i-1] = 1 / L[i-1][i-1] * (y[i-1] - Sum);
 	}
-
-	std::cout << "Процедура решения СЛАУ с импользование LU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
-	std::cout << "Время решения без учета процедуры LU разложения: " << (clock() - start_clock_Solution) / CLOCKS_PER_SEC << std::endl;
+	required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 }
 
 void LDU_Solver::LDU_decomposition(const CMatrix &Lhs, CMatrix &L, CMatrix &D)
@@ -534,7 +530,7 @@ void LDU_Solver::LDU_decomposition(const CMatrix &Lhs, CMatrix &L, CMatrix &D)
 			}
 		}
 	}
-	std::cout << "Процедура LDU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
+	required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 }
 
 void LDU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
@@ -568,8 +564,7 @@ void LDU_Solver::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::
 		}
 		u[i-1] = 1 / L.GetValue(i-1, i-1) * (y[i-1] - Sum);
 	}
-
-	std::cout << "Процедура решения СЛАУ с импользование LDU разложения заняла: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
+	required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 }
 
 void CG_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std::vector<double> &u)
@@ -605,8 +600,8 @@ void CG_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std:
 
 		if(sqrt(Norm2) < parameters->eps * parameters->eps)
         {
-            std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-            std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
+			num_iterations = k;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 			write_in_file(R, "Residuals_P");
             break;
         }
@@ -641,8 +636,8 @@ void GD_Solver_P::solve(const CMatrix &Lhs, const std::vector<double> &Rhs, std:
 
         if(sqrt(Norm2) < parameters->eps)
         {
-            std::cout << "Процесс сошелся на итерации: " << k <<std::endl;
-            std::cout << "Время затраченное на решение: " << (clock() - start_time) / CLOCKS_PER_SEC << std::endl;
+			num_iterations = k;
+			required_time = (clock() - start_time) / CLOCKS_PER_SEC;
 			write_in_file(R, "Residuals_P");
             break;
         }

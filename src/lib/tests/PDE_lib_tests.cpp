@@ -81,8 +81,8 @@ TEST_CASE( "Check 2D algorythm", "[2DSolution]" )
 	MatrixSolverParams* params = new MatrixSolverParams(MatrixSolverParams::Methods::SSOR, MatrixSolverParams::Preconditioners::None, 1000, 1.e-5, 10, 1.975);
 	FemPDE fem_pde_ex(&triang_grid_ex, f_fun, k_fun, params);
 
-	double* left_side = new double[0, 0, 0];
-	double* right_side = new double[1, 0, 0];
+	double* left_side = new double[3] {0,0,0};
+	double* right_side = new double[3] {1,0,0};
 
 	fem_pde_ex.assemble();
 	fem_pde_ex.apply_boundary_condition_dirichlet(u_ex(left_side), 
@@ -93,24 +93,26 @@ TEST_CASE( "Check 2D algorythm", "[2DSolution]" )
 	std::vector<double> solution_ex = fem_pde_ex.solve();
 
 	// -------------------- Solution elements check -------------------- //
-	CHECK( solution_ex[0] == 0.352274 );
-	CHECK( solution_ex[1] == 0.352274 );
-	CHECK( solution_ex[2] == 0.352274 );
-	CHECK( solution_ex[3] == 0.352274 );
+	CHECK( Approx(solution_ex[0]) == u_ex(left_side) );
+	CHECK( Approx(solution_ex[1]) == u_ex(right_side) );
+	CHECK( Approx(solution_ex[2]) == u_ex(right_side) );
+	CHECK( Approx(solution_ex[3]) == u_ex(left_side) );
 
-	CHECK( solution_ex[157] == 0.77174501573231813 );
-	CHECK( solution_ex[158] == 0.81809928540064825 );
-	CHECK( solution_ex[159] == -0.14075087884627888 );
-	CHECK( solution_ex[160] == 0.39924632524794973 );
+	CHECK( Approx(solution_ex[157]) == 0.771745 );
+	CHECK( Approx(solution_ex[158]) == 0.818393 );
+	CHECK( Approx(solution_ex[159]) == -0.139711 );
+	CHECK( Approx(solution_ex[160]) == 0.399773 );
 
-	CHECK( solution_ex[297] == 0.38774212260081836 );
-	CHECK( solution_ex[298] == -0.49035029653729573 );
-	CHECK( solution_ex[299] == 0.96605592563877729 );
-	CHECK( solution_ex[300] == -0.687281 );
+	CHECK( Approx(solution_ex[297]) == 0.388296 );
+	CHECK( Approx(solution_ex[298]) == -0.490335 );
+	CHECK( Approx(solution_ex[299]) == 0.966209 );
+	CHECK( Approx(solution_ex[300]) == -0.685270 );
 	// -------------------- Solution elements check -------------------- //
 	
 	triang_grid_ex.savevtk(solution_ex, "TestCaseTriangleSolution.vtk");
 	delete params;
+	delete[] left_side;
+	delete[] right_side;
 }
 
 // ------------------- Approximation degree test ---------------------

@@ -5,6 +5,7 @@ set(SRC PDE_lib_tests.cpp
 	GlobalMat_tests.cpp
 	MatrixSolvers_tests.cpp
 	FiniteElemMesh_tests.cpp
+	Preconditioners_test.cpp
 	main.cpp)
 set(HEADERS PDE_lib_tests.h)
 
